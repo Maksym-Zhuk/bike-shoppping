@@ -7,15 +7,14 @@ use actix_web::{
 };
 use log::info;
 use utoipa::OpenApi;
-use utoipa_swagger_ui::SwaggerUi;
 
 mod api_docs;
 mod config;
 mod controllers;
 mod db;
-mod handlers;
 mod models;
 mod routes;
+mod services;
 
 #[actix_web::main]
 async fn main() {
@@ -29,12 +28,12 @@ async fn main() {
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(db.clone()))
-            .service(web::scope("/api").configure(routes::product::config))
+            .service(web::scope("/api").configure(routes::init))
             .service(
                 utoipa_swagger_ui::SwaggerUi::new("/docs/{_:.*}")
                     .url("/api-doc/openapi.json", openapi.clone()),
             )
-            .default_service(web::to(handlers::not_found))
+            .default_service(web::to(controllers::not_found))
     })
     .bind(("0.0.0.0", port))
     .unwrap()

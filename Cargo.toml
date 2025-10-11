@@ -19,3 +19,4 @@ utoipa-swagger-ui = { version = "9.0.2", features = [
     "actix-web",
     "debug-embed",
 ] }
+futures-util = "0.3"
