@@ -21,3 +21,4 @@ utoipa-swagger-ui = { version = "9.0.2", features = [
 ] }
 futures-util = "0.3"
 bson = { version = "2.9", features = ["uuid-1"] }
+anyhow = "1.0"
