@@ -12,5 +12,8 @@ use utoipa::OpenApi;
     servers(
         (url = "/api", description = "API prefix")
     ),
+    tags(
+        (name = "Products", description = "Product management endpoints")
+    )
 )]
 pub struct ApiDoc;
