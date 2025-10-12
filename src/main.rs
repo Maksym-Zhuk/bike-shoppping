@@ -21,7 +21,7 @@ async fn main() {
     config::init();
     let db = init_db().await;
     let port: u16 = env::var("PORT").unwrap().parse().unwrap();
-    let openapi = ApiDoc::openapi();
+    let openapi: utoipa::openapi::OpenApi = ApiDoc::openapi();
 
     info!("Server started in the port: {}", port);
 

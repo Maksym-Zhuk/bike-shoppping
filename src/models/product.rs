@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
-use utoipa::openapi::schema::{Schema, SchemaType};
-use utoipa::openapi::{ObjectBuilder, schema};
-use utoipa::{ToSchema, openapi::example};
+use utoipa::ToSchema;
 use uuid::Uuid;
 
 #[derive(TS, Serialize, Deserialize, Clone, ToSchema)]
@@ -10,6 +8,7 @@ use uuid::Uuid;
 pub struct Product {
     #[ts(type = "string")]
     #[schema(value_type = String)]
+    #[serde(with = "bson::serde_helpers::uuid_1_as_binary")]
     pub _id: Uuid,
     pub name: String,
     pub price: u32,

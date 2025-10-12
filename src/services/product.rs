@@ -22,7 +22,7 @@ pub async fn create_product(
     db: &Database,
     new_product_data: web::Json<CreateProductDto>,
 ) -> mongodb::error::Result<String> {
-    let collection = db.collection("products");
+    let collection = db.collection::<Product>("products");
 
     let new_product = Product {
         _id: Uuid::new_v4(),
@@ -37,4 +37,17 @@ pub async fn create_product(
     collection.insert_one(new_product).await?;
 
     Ok(String::from("Product created successfully"))
+}
+
+pub async fn get_product(
+    db: &Database,
+    product_id: &str,
+) -> mongodb::error::Result<Option<Product>> {
+    let collection = db.collection::<Product>("products");
+
+    let uuid = Uuid::parse_str(product_id)
+        .map_err(|e| mongodb::error::Error::custom(format!("Invalid UUID: {}", e)))?;
+
+    let product = collection.find_one(doc! {"_id": uuid}).await?;
+    Ok(product)
 }

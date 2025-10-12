@@ -354,6 +354,7 @@ name = "bike-shoppping-backend"
 version = "0.1.0"
 dependencies = [
  "actix-web",
+ "bson",
  "dotenvy",
  "env_logger",
  "futures-util",
