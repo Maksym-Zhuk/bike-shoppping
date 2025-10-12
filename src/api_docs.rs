@@ -8,6 +8,9 @@ use utoipa::OpenApi;
 #[openapi(
     paths(create_product, get_all_products, get_product),
     components(schemas(Product, CreateProductDto)),
-    info(title = "Bike Shop API", version = "0.1.0")
+    info(title = "Bike Shop API", version = "0.1.0"),
+    servers(
+        (url = "/api", description = "API prefix")
+    ),
 )]
 pub struct ApiDoc;
