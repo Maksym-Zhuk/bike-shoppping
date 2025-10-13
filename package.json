@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "run-backend": "cd backend && cargo run",
+    "gen-db-types": "cd backend && cargo test",
+    "run-frontend": "cd frontend && expo start",
+    "run-frontend-global": "cd frontend && expo start --tunnel"
+  }
+}
