@@ -8,8 +8,13 @@ pub fn init() -> Scope {
             web::get().to(product_controller::get_all_products),
         )
         .route(
-            "/create_product",
+            "/create",
             web::post().to(product_controller::create_product),
         )
         .route("/{id}", web::get().to(product_controller::get_product))
+        .route("/update", web::put().to(product_controller::update_product))
+        .route(
+            "/delete/{id}",
+            web::delete().to(product_controller::delete_product),
+        )
 }

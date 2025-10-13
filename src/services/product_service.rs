@@ -1,10 +1,11 @@
 use actix_web::web;
+use bson::to_document;
 use futures_util::stream::TryStreamExt;
 use mongodb::Database;
 use mongodb::bson::doc;
 use uuid::Uuid;
 
-use crate::models::product::{CreateProductDto, Product};
+use crate::models::product::{CreateProductDto, Product, UpdateProductDto};
 
 pub async fn get_all_products(db: &Database) -> mongodb::error::Result<Vec<Product>> {
     let collection = db.collection::<Product>("products");
@@ -50,4 +51,38 @@ pub async fn get_product(
 
     let product = collection.find_one(doc! {"_id": uuid}).await?;
     Ok(product)
+}
+
+pub async fn update_product(
+    db: &Database,
+    new_product_data: web::Json<UpdateProductDto>,
+) -> mongodb::error::Result<Option<String>> {
+    let collection = db.collection::<Product>("products");
+
+    let uuid = Uuid::parse_str(&new_product_data._id)
+        .map_err(|e| mongodb::error::Error::custom(format!("Invalid UUID: {}", e)))?;
+
+    let mut update_doc = to_document(&new_product_data)?;
+
+    update_doc.remove("_id");
+
+    collection
+        .update_one(doc! {"_id": uuid}, doc! {"$set": update_doc})
+        .await?;
+
+    Ok(Some(String::from("Product updated successfully")))
+}
+
+pub async fn delete_product(
+    db: &Database,
+    product_id: &str,
+) -> mongodb::error::Result<Option<String>> {
+    let collection = db.collection::<Product>("products");
+
+    let uuid = Uuid::parse_str(product_id)
+        .map_err(|e| mongodb::error::Error::custom(format!("Invalid UUID: {}", e)))?;
+
+    collection.delete_one(doc! {"_id": uuid}).await?;
+
+    Ok(Some(String::from("Product deleted successfully")))
 }

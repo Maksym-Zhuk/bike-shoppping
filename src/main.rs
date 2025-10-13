@@ -25,8 +25,8 @@ async fn main() {
     let port: u16 = env::var("PORT").unwrap().parse().unwrap();
     let openapi: utoipa::openapi::OpenApi = ApiDoc::openapi();
     let governor_conf = GovernorConfigBuilder::default()
-        .period(Duration::from_secs(20))
-        .burst_size(5)
+        .period(Duration::from_millis(50))
+        .burst_size(30)
         .finish()
         .unwrap();
 
@@ -41,9 +41,12 @@ async fn main() {
 
         App::new()
             .app_data(web::Data::new(db.clone()))
-            .service(web::scope("/api").configure(routes::init))
-            .wrap(cors)
-            .wrap(Governor::new(&governor_conf))
+            .service(
+                web::scope("/api")
+                    .wrap(cors)
+                    .wrap(Governor::new(&governor_conf))
+                    .configure(routes::init),
+            )
             .service(
                 utoipa_swagger_ui::SwaggerUi::new("/docs/{_:.*}")
                     .url("/api-doc/openapi.json", openapi.clone()),
