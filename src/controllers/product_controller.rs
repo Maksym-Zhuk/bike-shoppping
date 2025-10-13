@@ -4,6 +4,7 @@ use crate::{
 };
 use actix_web::{HttpResponse, Responder, web};
 use mongodb::Database;
+use validator::Validate;
 
 #[utoipa::path(
     get,
@@ -39,6 +40,14 @@ pub async fn create_product(
     db: web::Data<Database>,
     new_product_data: web::Json<CreateProductDto>,
 ) -> impl Responder {
+    if let Err(e) = new_product_data.validate() {
+        return HttpResponse::BadRequest().json(serde_json::json!({
+            "status": "error",
+            "message": "Validation failed",
+            "errors": e
+        }));
+    }
+
     match product_service::create_product(&db, new_product_data).await {
         Ok(answer) => HttpResponse::Created().body(answer),
         Err(err) => {
