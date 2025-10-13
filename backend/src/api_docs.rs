@@ -8,12 +8,13 @@ use crate::controllers::product_controller::{
 };
 use crate::models::order::{CreateOrderDto, Order, UpdateOrderDto};
 use crate::models::product::{CreateProductDto, Product, UpdateProductDto};
+use crate::models::res::{ErrorResponse, MessageResponse};
 use utoipa::OpenApi;
 
 #[derive(OpenApi)]
 #[openapi(
     paths(create_product, get_all_products, get_product, update_product, delete_product, create_order, get_all_orders, get_order, update_order, delete_order),
-    components(schemas(Product, CreateProductDto, UpdateProductDto, Order, CreateOrderDto, UpdateOrderDto)),
+    components(schemas(Product, CreateProductDto, UpdateProductDto, Order, CreateOrderDto, UpdateOrderDto, MessageResponse, ErrorResponse)),
     info(title = "Bike Shop API", version = "0.1.0"),
     servers(
         (url = "/api", description = "API prefix")

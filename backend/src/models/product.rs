@@ -5,7 +5,7 @@ use uuid::Uuid;
 use validator::Validate;
 
 #[derive(TS, Serialize, Deserialize, Clone, ToSchema, Validate)]
-#[ts(export)]
+#[ts(export, export_to = "../../db_types/Product.d.ts")]
 pub struct Product {
     #[ts(type = "string")]
     #[schema(value_type = String)]
@@ -32,7 +32,7 @@ pub struct Product {
 }
 
 #[derive(TS, Serialize, Deserialize, Clone, ToSchema, Validate)]
-#[ts(export)]
+#[ts(export, export_to = "../../db_types/CreateProductDto.d.ts")]
 pub struct CreateProductDto {
     #[validate(length(min = 2, message = "The number of letters must be at least 2."))]
     pub name: String,
@@ -55,7 +55,7 @@ pub struct CreateProductDto {
 }
 
 #[derive(TS, Serialize, Deserialize, Clone, ToSchema, Validate)]
-#[ts(export)]
+#[ts(export, export_to = "../../db_types/UpdateProductDto.d.ts")]
 pub struct UpdateProductDto {
     #[ts(type = "string")]
     #[schema(value_type = String)]

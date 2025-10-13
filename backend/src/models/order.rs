@@ -4,7 +4,7 @@ use utoipa::ToSchema;
 use uuid::Uuid;
 
 #[derive(TS, Serialize, Deserialize, Clone, ToSchema)]
-#[ts(export)]
+#[ts(export, export_to = "../../db_types/Order.d.ts")]
 pub struct Order {
     #[ts(type = "string")]
     #[schema(value_type = String)]
@@ -16,7 +16,7 @@ pub struct Order {
 }
 
 #[derive(TS, Serialize, Deserialize, Clone, ToSchema)]
-#[ts(export)]
+#[ts(export, export_to = "../../db_types/CreateOrderDto.d.ts")]
 pub struct CreateOrderDto {
     /// products id
     pub products_id: Vec<String>,
@@ -24,7 +24,7 @@ pub struct CreateOrderDto {
 }
 
 #[derive(TS, Serialize, Deserialize, Clone, ToSchema)]
-#[ts(export)]
+#[ts(export, export_to = "../../db_types/UpdateOrderDto.d.ts")]
 pub struct UpdateOrderDto {
     #[ts(type = "string")]
     #[schema(value_type = String)]
