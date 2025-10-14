@@ -1,9 +1,13 @@
-import { Text, View } from "react-native";
+import { Text, View, Image } from "react-native";
 
 export default function HomePage() {
     return (
-        <View>
-            <Text className="text-white bg-slate-300">HomePage layout</Text>
+        <View className="w-full h-full">
+            <Image
+                source={require("../../../assets/images/BG.png")}
+                className="absolute w-[110%] h-full right-[-12px] bottom-[-35px]"
+                resizeMode="cover"
+            />
         </View>
     );
 }

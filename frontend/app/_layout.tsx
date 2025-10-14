@@ -7,7 +7,6 @@ export default function RootLayout() {
         headerShown: false,
         contentStyle: {
           backgroundColor: '#242C38',
-          paddingHorizontal: 20
         },
       }}
     />
