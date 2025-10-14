@@ -5,7 +5,7 @@ export default function HomePage() {
         <View className="w-full h-full">
             <Image
                 source={require("../../../assets/images/BG.png")}
-                className="absolute w-[100%] h-full right-[-20px] bottom-[-45px]"
+                className="absolute w-[100%] h-full right-0 bottom-[-145px]"
                 resizeMode="cover"
             />
             <Navigation />
