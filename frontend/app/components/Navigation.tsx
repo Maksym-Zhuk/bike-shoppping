@@ -5,19 +5,19 @@ import { Bike, Map, ShoppingCart, User, FileText } from 'lucide-react-native'
 export default function Navigation() {
     const navigationOptions = [
         {
-            icon: <Bike color='white' />
+            icon: <Bike color='rgba(255,255,255,0.6)' />
         },
         {
-            icon: <Map color='white' />
+            icon: <Map color='rgba(255,255,255,0.6)' />
         },
         {
-            icon: <ShoppingCart color='white' />
+            icon: <ShoppingCart color='rgba(255,255,255,0.6)' />
         },
         {
-            icon: <User color='white' />
+            icon: <User color='rgba(255,255,255,0.6)' />
         },
         {
-            icon: <FileText color='white' />
+            icon: <FileText color='rgba(255,255,255,0.6)' />
         },
     ]
     return (
@@ -33,7 +33,10 @@ export default function Navigation() {
             />
             <View className="w-full h-full px-12 flex flex-row items-center justify-between">
                 {navigationOptions.map((option, index) => (
-                    <View key={index}>
+                    <View
+                        key={index}
+                        style={{ transform: [{ translateY: -10 }] }}
+                    >
                         {option.icon}
                     </View>
                 ))}
