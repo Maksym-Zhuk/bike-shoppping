@@ -1,11 +1,11 @@
 import { Text, View, Image } from "react-native";
 import Navigation from "../Navigation";
+import SearchBar from "./SearchBar";
 export default function HomePage() {
     return (
         <View className="w-full h-full">
-            <View className="px-5 pt-6">
-                {/* content here later on */}
-                {/* <Text className="font-bold text-[24px] text-white">Choose your bike</Text> */}
+            <View className="px-5 pt-4">
+                <SearchBar />
             </View>
             <Image
                 source={require("../../../assets/images/BG.png")}
