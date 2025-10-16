@@ -1,17 +1,27 @@
-import { Text, View, Image } from "react-native";
+import React from "react";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import Navigation from "../Navigation";
 import SearchBar from "./SearchBar";
+import BannerShape from "./BannerShape";
+
 export default function HomePage() {
     return (
-        <View className="w-full h-full">
-            <View className="px-5 pt-4">
-                <SearchBar />
-            </View>
+        <View className="flex-1">
             <Image
                 source={require("../../../assets/images/BG.png")}
-                className="absolute w-[100%] h-full right-0 bottom-[-145px]"
+                className="absolute w-full h-full right-0 bottom-[-145px] z-0"
                 resizeMode="cover"
             />
+
+            <View className="px-5 pt-4 z-20">
+                <SearchBar />
+            </View>
+
+            <BannerShape className="-mt-5">
+                <View className="items-center">
+                </View>
+            </BannerShape>
+
             <Navigation />
         </View>
     );
