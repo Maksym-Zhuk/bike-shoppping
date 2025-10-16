@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Dimensions } from "react-native";
-import Svg, { Defs, LinearGradient, Stop, Path, ClipPath } from "react-native-svg";
+import Svg, { Defs, LinearGradient, Stop, Path } from "react-native-svg";
 import { BlurView } from "expo-blur";
+import MaskedView from "@react-native-masked-view/masked-view";
 
 interface BannerShapeProps {
     children?: React.ReactNode;
@@ -14,6 +15,9 @@ const ORIGINAL_H = 358;
 const BANNER_HEIGHT = Math.round((SCREEN_WIDTH * ORIGINAL_H) / ORIGINAL_W);
 
 export default function BannerShape({ children, className }: BannerShapeProps) {
+    const pathD =
+        "M20 60C20 48.9543 28.9543 40 40 40H350C361.046 40 370 48.9543 370 60V222.156C370 232.323 362.372 240.872 352.271 242.026L42.2709 277.455C30.4029 278.811 20 269.529 20 257.584V60Z";
+
     return (
         <View
             className={`relative overflow-hidden z-10 ${className}`}
@@ -51,14 +55,10 @@ export default function BannerShape({ children, className }: BannerShapeProps) {
                         <Stop offset="0.844522" stopOpacity="0" />
                         <Stop offset="1" stopOpacity="0" />
                     </LinearGradient>
-
-                    <ClipPath id="clip-shape">
-                        <Path d="M20 60C20 48.9543 28.9543 40 40 40H350C361.046 40 370 48.9543 370 60V222.156C370 232.323 362.372 240.872 352.271 242.026L42.2709 277.455C30.4029 278.811 20 269.529 20 257.584V60Z" />
-                    </ClipPath>
                 </Defs>
 
                 <Path
-                    d="M20 60C20 48.9543 28.9543 40 40 40H350C361.046 40 370 48.9543 370 60V222.156C370 232.323 362.372 240.872 352.271 242.026L42.2709 277.455C30.4029 278.811 20 269.529 20 257.584V60Z"
+                    d={pathD}
                     fill="url(#paint0)"
                     fillOpacity={0.6}
                     stroke="url(#paint1)"
@@ -66,9 +66,28 @@ export default function BannerShape({ children, className }: BannerShapeProps) {
                     strokeOpacity={0.2}
                 />
             </Svg>
-            {/* <View className="absolute inset-0">
-                <BlurView intensity={40} tint="dark" className="absolute inset-0" />
-            </View> */}
+
+            <MaskedView
+                style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+                maskElement={
+                    <Svg
+                        width={SCREEN_WIDTH}
+                        height={BANNER_HEIGHT}
+                        viewBox={`0 0 ${ORIGINAL_W} ${ORIGINAL_H}`}
+                    >
+                        <Path d={pathD} fill="white" />
+                    </Svg>
+                }
+            >
+                <BlurView
+                    intensity={40}
+                    tint="dark"
+                    style={{
+                        flex: 1,
+                    }}
+                />
+            </MaskedView>
+
             <View className="absolute inset-0 items-center justify-center px-6">
                 {children}
             </View>
