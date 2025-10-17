@@ -12,7 +12,7 @@ interface IconShapeProps {
 const IconShape: React.FC<IconShapeProps> = ({ children }) => {
     return (
         <View className="items-center justify-center">
-            <Svg width={100} height={120} viewBox="0 0 107 103" fill="none">
+            <Svg width={100} height={120} viewBox="0 0 102 100" fill="none">
                 <Defs>
                     <SvgGradient
                         id="paint0_linear"
