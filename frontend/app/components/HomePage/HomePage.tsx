@@ -18,7 +18,12 @@ export default function HomePage() {
             </View>
 
             <BannerShape className="-mt-5">
-                <View className="items-center">
+                <View className="w-full items-center justify-center -mt-[100px] ">
+                    <Image
+                        source={require("../../../assets/images/banner-bike-sample.png")}
+                        className="w-[90%] h-[170px] z-10"
+                        resizeMode="contain"
+                    />
                 </View>
             </BannerShape>
 
