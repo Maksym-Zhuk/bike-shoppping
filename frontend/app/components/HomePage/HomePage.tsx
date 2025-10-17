@@ -1,8 +1,9 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, Image } from "react-native";
 import Navigation from "../Navigation";
 import SearchBar from "./SearchBar";
 import BannerShape from "./BannerShape";
+import AppIcons from "./AppIcons";
 
 export default function HomePage() {
     return (
@@ -18,7 +19,7 @@ export default function HomePage() {
             </View>
 
             <BannerShape className="-mt-5">
-                <View className="w-full items-center justify-center -mt-[100px] relative">
+                <View className="w-full items-center justify-center -mt-[50px] relative">
                     <Image
                         source={require("../../../assets/images/banner-bike-sample.png")}
                         className="w-[90%] h-[170px] z-10"
@@ -28,6 +29,7 @@ export default function HomePage() {
                 </View>
             </BannerShape>
 
+            <AppIcons />
             <Navigation />
         </View>
     );

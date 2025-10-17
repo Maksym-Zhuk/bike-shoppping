@@ -20,7 +20,7 @@ export default function BannerShape({ children, className }: BannerShapeProps) {
 
     return (
         <View
-            className={`relative overflow-hidden z-10 ${className}`}
+            className={`relative max-h-[345px] overflow-hidden z-10 ${className}`}
             style={{ width: SCREEN_WIDTH, height: BANNER_HEIGHT }}
         >
             <Svg
@@ -81,7 +81,7 @@ export default function BannerShape({ children, className }: BannerShapeProps) {
             >
                 <BlurView intensity={40} tint="dark" className="flex-1" />
 
-                <View className="absolute inset-0 bg-white/15" />
+                <View className="absolute inset-0 bg-white/10" />
             </MaskedView>
 
             <View className="absolute inset-0 items-center justify-center px-6">
