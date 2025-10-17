@@ -18,12 +18,13 @@ export default function HomePage() {
             </View>
 
             <BannerShape className="-mt-5">
-                <View className="w-full items-center justify-center -mt-[100px] ">
+                <View className="w-full items-center justify-center -mt-[100px] relative">
                     <Image
                         source={require("../../../assets/images/banner-bike-sample.png")}
                         className="w-[90%] h-[170px] z-10"
                         resizeMode="contain"
                     />
+                    <Text className="absolute text-[rgba(255,255,255,0.7)] text-[32px] font-bold top-[175px] left-[25px]">30% Off</Text>
                 </View>
             </BannerShape>
 
