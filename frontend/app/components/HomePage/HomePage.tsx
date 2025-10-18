@@ -4,6 +4,7 @@ import Navigation from "../Navigation";
 import SearchBar from "./SearchBar";
 import BannerShape from "./BannerShape";
 import AppIcons from "./AppIcons";
+import Products from "./Products";
 
 export default function HomePage() {
     return (
@@ -30,6 +31,7 @@ export default function HomePage() {
             </BannerShape>
 
             <AppIcons />
+            <Products />
             <Navigation />
         </View>
     );
