@@ -1,6 +1,9 @@
 use std::{env, time::Duration};
 
-use crate::{api_docs::ApiDoc, db::mongo_client::init_db};
+use crate::{
+    api_docs::ApiDoc,
+    db::{mongo::init_db, redis::init_redis},
+};
 use actix_cors::Cors;
 use actix_governor::{Governor, GovernorConfigBuilder};
 use actix_web::{
@@ -8,6 +11,7 @@ use actix_web::{
     web::{self},
 };
 use log::info;
+use redis::aio::ConnectionManager;
 use utoipa::OpenApi;
 
 mod api_docs;
@@ -18,10 +22,16 @@ mod models;
 mod routes;
 mod services;
 
+struct AppState {
+    mongo: mongodb::Database,
+    redis: ConnectionManager,
+}
+
 #[actix_web::main]
 async fn main() {
     config::init();
-    let db = init_db().await;
+    let mongo: mongodb::Database = init_db().await;
+    let redis = init_redis().await.expect("Failed to connect to Redis");
     let port: u16 = env::var("PORT").unwrap().parse().unwrap();
     let openapi: utoipa::openapi::OpenApi = ApiDoc::openapi();
     let governor_conf = GovernorConfigBuilder::default()
@@ -29,6 +39,8 @@ async fn main() {
         .burst_size(30)
         .finish()
         .unwrap();
+
+    let state = web::Data::new(AppState { mongo, redis });
 
     info!("Server started in the port: {}", port);
 
@@ -40,7 +52,7 @@ async fn main() {
             .max_age(3600);
 
         App::new()
-            .app_data(web::Data::new(db.clone()))
+            .app_data(state.clone())
             .service(
                 web::scope("/api")
                     .wrap(cors)

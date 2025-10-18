@@ -4,7 +4,7 @@ use utoipa::ToSchema;
 use uuid::Uuid;
 use validator::Validate;
 
-#[derive(TS, Serialize, Deserialize, Clone, ToSchema, Validate)]
+#[derive(TS, Serialize, Deserialize, Clone, ToSchema, Validate, Debug)]
 #[ts(export, export_to = "../../db_types/Product.d.ts")]
 pub struct Product {
     #[ts(type = "string")]

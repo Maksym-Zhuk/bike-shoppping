@@ -4,6 +4,10 @@ use actix_web::{Scope, web};
 pub fn init() -> Scope {
     web::scope("/product")
         .route(
+            "/most_advantageous",
+            web::get().to(product_controller::get_most_advantageous),
+        )
+        .route(
             "/products",
             web::get().to(product_controller::get_all_products),
         )

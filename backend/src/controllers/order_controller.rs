@@ -1,7 +1,7 @@
 use actix_web::{HttpResponse, Responder, web};
-use mongodb::Database;
 
 use crate::{
+    AppState,
     models::{
         order::{CreateOrderDto, Order, UpdateOrderDto},
         res::{ErrorResponse, MessageResponse},
@@ -18,8 +18,8 @@ use crate::{
     ),
     tag = "Orders"
 )]
-pub async fn get_all_orders(db: web::Data<Database>) -> impl Responder {
-    match order_service::get_all_orders(&db).await {
+pub async fn get_all_orders(db: web::Data<AppState>) -> impl Responder {
+    match order_service::get_all_orders(&db.mongo).await {
         Ok(orders) => HttpResponse::Ok().json(orders),
         Err(err) => {
             eprintln!("{}", err);
@@ -42,10 +42,10 @@ pub async fn get_all_orders(db: web::Data<Database>) -> impl Responder {
     tag = "Orders"
 )]
 pub async fn create_order(
-    db: web::Data<Database>,
+    db: web::Data<AppState>,
     new_order_data: web::Json<CreateOrderDto>,
 ) -> impl Responder {
-    match order_service::create_order(&db, new_order_data).await {
+    match order_service::create_order(&db.mongo, new_order_data).await {
         Ok(answer) => HttpResponse::Created().json(MessageResponse { message: answer }),
         Err(err) => {
             eprintln!("{}", err);
@@ -74,8 +74,8 @@ pub async fn create_order(
     ),
     tag = "Orders"
 )]
-pub async fn get_order(db: web::Data<Database>, order_id: web::Path<String>) -> impl Responder {
-    match order_service::get_order(&db, &order_id).await {
+pub async fn get_order(db: web::Data<AppState>, order_id: web::Path<String>) -> impl Responder {
+    match order_service::get_order(&db.mongo, &order_id).await {
         Ok(Some(order)) => HttpResponse::Ok().json(order),
         Ok(None) => HttpResponse::NotFound().json(MessageResponse {
             message: "Order not found".to_string(),
@@ -101,10 +101,10 @@ pub async fn get_order(db: web::Data<Database>, order_id: web::Path<String>) -> 
     tag = "Orders"
 )]
 pub async fn update_order(
-    db: web::Data<Database>,
+    db: web::Data<AppState>,
     new_order_data: web::Json<UpdateOrderDto>,
 ) -> impl Responder {
-    match order_service::update_order(&db, new_order_data).await {
+    match order_service::update_order(&db.mongo, new_order_data).await {
         Ok(Some(answer)) => HttpResponse::Ok().json(MessageResponse { message: answer }),
         Ok(None) => HttpResponse::NotFound().json(MessageResponse {
             message: "Order not found".to_string(),
@@ -131,8 +131,8 @@ pub async fn update_order(
     ),
     tag = "Orders"
 )]
-pub async fn delete_order(db: web::Data<Database>, order_id: web::Path<String>) -> impl Responder {
-    match order_service::delete_order(&db, &order_id).await {
+pub async fn delete_order(db: web::Data<AppState>, order_id: web::Path<String>) -> impl Responder {
+    match order_service::delete_order(&db.mongo, &order_id).await {
         Ok(Some(answer)) => HttpResponse::Ok().json(MessageResponse { message: answer }),
         Ok(None) => HttpResponse::NotFound().json(MessageResponse {
             message: "Order not found".to_string(),

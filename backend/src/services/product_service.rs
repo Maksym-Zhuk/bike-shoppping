@@ -1,17 +1,19 @@
 use actix_web::web;
 use bson::to_document;
 use futures_util::stream::TryStreamExt;
-use mongodb::Database;
 use mongodb::bson::doc;
+use mongodb::{Database, options::FindOneOptions};
+use redis::{AsyncCommands, aio::ConnectionManager};
 use uuid::Uuid;
 
 use crate::models::product::{CreateProductDto, Product, UpdateProductDto};
 
 pub async fn get_all_products(db: &Database) -> mongodb::error::Result<Vec<Product>> {
     let collection = db.collection::<Product>("products");
-    let mut cursor = collection.find(doc! {}).await?;
 
+    let mut cursor = collection.find(doc! {}).await?;
     let mut products = Vec::new();
+
     while let Some(result) = cursor.try_next().await? {
         products.push(result);
     }
@@ -85,4 +87,31 @@ pub async fn delete_product(
     collection.delete_one(doc! {"_id": uuid}).await?;
 
     Ok(Some(String::from("Product deleted successfully")))
+}
+
+pub async fn get_most_advantageous(
+    db: &Database,
+    mut redis: ConnectionManager,
+) -> mongodb::error::Result<Option<Product>> {
+    if let Ok(cached_json) = redis.get::<_, String>("most_advantageous").await {
+        if let Ok(product) = serde_json::from_str::<Product>(&cached_json) {
+            return Ok(Some(product));
+        }
+    }
+
+    let collection = db.collection::<Product>("products");
+
+    let options = FindOneOptions::builder()
+        .sort(doc! { "discount": -1 })
+        .build();
+
+    let best_product = collection.find_one(doc! {}).with_options(options).await?;
+
+    if let Some(ref product) = best_product {
+        if let Ok(json) = serde_json::to_string(product) {
+            let _: std::result::Result<(), _> = redis.set_ex("most_advantageous", json, 3600).await;
+        }
+    }
+
+    Ok(best_product)
 }
