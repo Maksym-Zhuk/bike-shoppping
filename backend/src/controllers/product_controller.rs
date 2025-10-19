@@ -52,7 +52,8 @@ pub async fn create_product(
         });
     }
 
-    match product_service::create_product(&state.mongo, new_product_data).await {
+    match product_service::create_product(&state.mongo, state.redis.clone(), new_product_data).await
+    {
         Ok(answer) => HttpResponse::Created().json(MessageResponse { message: answer }),
         Err(err) => {
             eprintln!("{}", err);
@@ -109,7 +110,8 @@ pub async fn update_product(
     state: web::Data<AppState>,
     new_product_data: web::Json<UpdateProductDto>,
 ) -> impl Responder {
-    match product_service::update_product(&state.mongo, new_product_data).await {
+    match product_service::update_product(&state.mongo, state.redis.clone(), new_product_data).await
+    {
         Ok(Some(answer)) => HttpResponse::Ok().json(MessageResponse { message: answer }),
         Ok(None) => HttpResponse::NotFound().json(MessageResponse {
             message: "Product not found".to_string(),
@@ -140,7 +142,7 @@ pub async fn delete_product(
     state: web::Data<AppState>,
     product_id: web::Path<String>,
 ) -> impl Responder {
-    match product_service::delete_product(&state.mongo, &product_id).await {
+    match product_service::delete_product(&state.mongo, state.redis.clone(), &product_id).await {
         Ok(Some(answer)) => HttpResponse::Ok().json(MessageResponse { message: answer }),
         Ok(None) => HttpResponse::NotFound().json(MessageResponse {
             message: "Product not found".to_string(),

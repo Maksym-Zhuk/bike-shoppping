@@ -23,10 +23,9 @@ pub async fn get_all_products(db: &Database) -> mongodb::error::Result<Vec<Produ
 
 pub async fn create_product(
     db: &Database,
+    mut redis: ConnectionManager,
     new_product_data: web::Json<CreateProductDto>,
 ) -> mongodb::error::Result<String> {
-    let collection = db.collection::<Product>("products");
-
     let new_product = Product {
         _id: Uuid::new_v4(),
         name: new_product_data.name.to_string(),
@@ -37,7 +36,10 @@ pub async fn create_product(
         price: new_product_data.price,
     };
 
-    collection.insert_one(new_product).await?;
+    let collection = db.collection::<Product>("products");
+    collection.insert_one(&new_product).await?;
+
+    let _: std::result::Result<(), _> = redis.del("most_advantageous").await;
 
     Ok(String::from("Product created successfully"))
 }
@@ -57,6 +59,7 @@ pub async fn get_product(
 
 pub async fn update_product(
     db: &Database,
+    mut redis: ConnectionManager,
     new_product_data: web::Json<UpdateProductDto>,
 ) -> mongodb::error::Result<Option<String>> {
     let collection = db.collection::<Product>("products");
@@ -65,18 +68,20 @@ pub async fn update_product(
         .map_err(|e| mongodb::error::Error::custom(format!("Invalid UUID: {}", e)))?;
 
     let mut update_doc = to_document(&new_product_data)?;
-
     update_doc.remove("_id");
 
     collection
         .update_one(doc! {"_id": uuid}, doc! {"$set": update_doc})
         .await?;
 
+    let _: std::result::Result<(), _> = redis.del("most_advantageous").await;
+
     Ok(Some(String::from("Product updated successfully")))
 }
 
 pub async fn delete_product(
     db: &Database,
+    mut redis: ConnectionManager,
     product_id: &str,
 ) -> mongodb::error::Result<Option<String>> {
     let collection = db.collection::<Product>("products");
@@ -86,6 +91,8 @@ pub async fn delete_product(
 
     collection.delete_one(doc! {"_id": uuid}).await?;
 
+    let _: std::result::Result<(), _> = redis.del("most_advantageous").await;
+
     Ok(Some(String::from("Product deleted successfully")))
 }
 
@@ -94,8 +101,8 @@ pub async fn get_most_advantageous(
     mut redis: ConnectionManager,
 ) -> mongodb::error::Result<Option<Product>> {
     if let Ok(cached_json) = redis.get::<_, String>("most_advantageous").await {
-        if let Ok(product) = serde_json::from_str::<Product>(&cached_json) {
-            return Ok(Some(product));
+        if let Ok(best_product) = serde_json::from_str::<Product>(&cached_json) {
+            return Ok(Some(best_product));
         }
     }
 
