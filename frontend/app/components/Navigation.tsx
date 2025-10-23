@@ -4,7 +4,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import { Bike, Map, ShoppingCart, User, FileText } from "lucide-react-native";
 import Svg, { Path, Defs, LinearGradient as SvgGradient, Stop, G } from "react-native-svg";
-
+import { useRouter, usePathname } from 'expo-router';
+import type { Href } from "expo-router";
 interface IconShapeProps {
     children: ReactNode;
 }
@@ -70,7 +71,8 @@ const IconShape: React.FC<IconShapeProps> = ({ children }) => {
 };
 
 export default function Navigation() {
-    const [activeIndex, setActiveIndex] = useState<number>(0);
+    const router = useRouter();
+    const pathname = usePathname();
 
     const animations = useRef<Animated.Value[]>(
         Array(5)
@@ -78,13 +80,15 @@ export default function Navigation() {
             .map((_, i) => new Animated.Value(i === 0 ? -35 : -10))
     ).current;
 
-    const icons = [
-        <Bike color="rgba(255,255,255,0.6)" size={28} key="bike" />,
-        <Map color="rgba(255,255,255,0.6)" size={28} key="map" />,
-        <ShoppingCart color="rgba(255,255,255,0.6)" size={28} key="cart" />,
-        <User color="rgba(255,255,255,0.6)" size={28} key="user" />,
-        <FileText color="rgba(255,255,255,0.6)" size={28} key="file" />,
+    const icons: { icon: React.ReactNode; route: Href }[] = [
+        { icon: <Bike color="rgba(255,255,255,0.6)" size={28} />, route: "/" },
+        { icon: <Map color="rgba(255,255,255,0.6)" size={28} />, route: "/map" },
+        { icon: <ShoppingCart color="rgba(255,255,255,0.6)" size={28} />, route: "/shop" },
+        { icon: <User color="rgba(255,255,255,0.6)" size={28} />, route: "/user" },
+        { icon: <FileText color="rgba(255,255,255,0.6)" size={28} key="file" />, route: "/documentation" },
     ];
+
+    const activeIndex = icons.findIndex(item => item.route === pathname);
 
     useEffect(() => {
         animations.forEach((anim, i) => {
@@ -98,7 +102,7 @@ export default function Navigation() {
     }, [activeIndex]);
 
     return (
-        <View className="absolute bottom-0 w-full">
+        <View className="absolute bottom-8 w-full">
             <LinearGradient
                 colors={["#363E51", "#181C24"]}
                 style={{
@@ -123,13 +127,14 @@ export default function Navigation() {
             />
 
             <View className="w-full h-full px-9 flex flex-row items-center justify-between">
-                {icons.map((icon, index) => {
+                {icons.map((item, index) => {
                     const isActive = index === activeIndex;
                     return (
                         <TouchableOpacity
                             key={index}
                             activeOpacity={0.8}
-                            onPress={() => setActiveIndex(index)}
+                            onPress={() => router.push(item.route)}
+
                         >
                             <Animated.View
                                 className="w-[55px] h-[42px] rounded-lg overflow-visible items-center justify-center"
@@ -153,7 +158,7 @@ export default function Navigation() {
                                             elevation: 8,
                                         }}
                                     >
-                                        <IconShape>{icon}</IconShape>
+                                        <IconShape>{item.icon}</IconShape>
                                     </View>
                                 ) : (
                                     <View
@@ -163,7 +168,7 @@ export default function Navigation() {
                                             opacity: 0.8,
                                         }}
                                     >
-                                        {icon}
+                                        {item.icon}
                                     </View>
                                 )}
                             </Animated.View>

@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, Image } from "react-native";
-import Navigation from "../Navigation";
 import SearchBar from "./SearchBar";
 import BannerShape from "./BannerShape";
 import AppIcons from "./AppIcons";
@@ -32,7 +31,7 @@ export default function HomePage() {
 
             <AppIcons />
             <Products />
-            <Navigation />
+
         </View>
     );
 }
