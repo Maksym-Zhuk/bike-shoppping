@@ -26,3 +26,7 @@ actix-cors = "0.7"
 validator = { version = "0.20.0", features = ["derive"] }
 actix-governor = "0.10.0"
 redis = { version = "0.32.7", features = ["tokio-comp", "connection-manager"] }
+jsonwebtoken = "10.1.0"
+argon2 = "0.5"
+chrono = { version = "0.4", features = ["serde"] }
+actix-rt = "2"
