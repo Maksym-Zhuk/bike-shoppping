@@ -11,6 +11,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Search, X } from "lucide-react-native";
 import { useRef, useState } from "react";
+import SpecialIconGradient from "../SpecialIconGradient";
 
 export default function SearchBar() {
     const [active, setActive] = useState(false);
@@ -94,18 +95,8 @@ export default function SearchBar() {
                         marginLeft: -205,
                     }}
                 >
-                    <LinearGradient
-                        colors={["#34C8E8", "#4E4AF2"]}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 0, y: 1 }}
-                        style={{
-                            flex: 1,
-                            flexDirection: "row",
-                            alignItems: "center",
-                            paddingHorizontal: 10,
-                        }}
-                    >
-                        <Animated.View
+                <SpecialIconGradient>
+                                            <Animated.View
                             style={{
                                 flex: 1,
                                 opacity: inputOpacity,
@@ -130,7 +121,7 @@ export default function SearchBar() {
                                 <Search size={24} color="white" style={{ marginLeft: -7 }} />
                             )}
                         </TouchableOpacity>
-                    </LinearGradient>
+                    </SpecialIconGradient>
                 </Animated.View>
             </View>
         </TouchableWithoutFeedback>

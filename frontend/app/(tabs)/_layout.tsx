@@ -1,4 +1,5 @@
 import { Tabs } from "expo-router";import React, { useRef, useEffect, ReactNode } from "react";
+import "../global.css";
 import { View, TouchableOpacity, Animated } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
