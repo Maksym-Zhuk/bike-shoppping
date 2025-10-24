@@ -1,14 +1,12 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Navigation from './components/Navigation';
-import ShopPage from './components/ShopPage/ShopPage';
+import MapPage from '../components/MapPage/MapPage';
 
-export default function Shop() {
+export default function Map() {
     return (
         <>
             <SafeAreaView className="flex-1 bg-[#242C38]">
-                <ShopPage />
+                <MapPage />
             </SafeAreaView>
-            <Navigation />
         </>
     );
 }

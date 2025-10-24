@@ -10,6 +10,7 @@ export default function RootLayout() {
           backgroundColor: '#242C38',
         },
       }}
-    />
+    >
+    </Stack>
   );
 }

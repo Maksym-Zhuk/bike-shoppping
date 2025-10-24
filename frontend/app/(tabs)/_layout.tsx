@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, ReactNode } from "react";
+import { Tabs } from "expo-router";import React, { useRef, useEffect, ReactNode } from "react";
 import { View, TouchableOpacity, Animated } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
@@ -69,8 +69,7 @@ const IconShape: React.FC<IconShapeProps> = ({ children }) => {
         </View>
     );
 };
-
-export default function Navigation() {
+export function Navigation() {
     const router = useRouter();
     const pathname = usePathname();
 
@@ -178,4 +177,22 @@ export default function Navigation() {
             </View>
         </View>
     );
+}
+
+export default function RootLayout() {
+  return (
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        animation: 'fade',
+        tabBarStyle: {
+          backgroundColor: '#242C38',
+        }
+      }}
+      tabBar={()=>{
+        return <Navigation/>
+      }}
+      >
+    </Tabs>
+  )
 }
