@@ -1,8 +1,9 @@
-use crate::controllers::order_controller;
-use actix_web::{Scope, web};
+use crate::{controllers::order_controller, middleware::auth::JwtMiddleware};
+use actix_web::web;
 
-pub fn init() -> Scope {
+pub fn init() -> impl actix_web::dev::HttpServiceFactory {
     web::scope("/order")
+        .wrap(JwtMiddleware)
         .route("/orders", web::get().to(order_controller::get_all_orders))
         .route("/create", web::post().to(order_controller::create_order))
         .route("/{id}", web::get().to(order_controller::get_order))

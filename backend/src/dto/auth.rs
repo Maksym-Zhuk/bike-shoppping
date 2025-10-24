@@ -7,8 +7,10 @@ use validator::Validate;
 #[ts(export, export_to = "../../db_types/LoginDto.d.ts")]
 pub struct LoginDto {
     #[validate(email(message = "Invalid email format"))]
+    #[schema(example = "user@example.com", format = "email")]
     pub email: String,
     #[validate(length(min = 8, message = "Password must be at least 8 characters"))]
+    #[schema(min_length = 8, example = "password123")]
     pub password: String,
 }
 
@@ -16,10 +18,13 @@ pub struct LoginDto {
 #[ts(export, export_to = "../../db_types/RegisterDto.d.ts")]
 pub struct RegisterDto {
     #[validate(email(message = "Invalid email format"))]
+    #[schema(example = "user@example.com", format = "email")]
     pub email: String,
     #[validate(length(min = 8, message = "Password must be at least 8 characters"))]
+    #[schema(min_length = 8, example = "password123")]
     pub password: String,
     #[validate(length(min = 2, max = 50))]
+    #[schema(min_length = 2, max_length = 50, example = "John Doe")]
     pub name: String,
 }
 
@@ -37,5 +42,16 @@ pub struct UserInfo {
     pub id: String,
     pub email: String,
     pub name: String,
-    pub role: String,
+}
+
+#[derive(TS, Deserialize, Clone, ToSchema)]
+#[ts(export, export_to = "../../db_types/RefreshTokenRequest.d.ts")]
+pub struct RefreshTokenRequest {
+    pub refresh_token: String,
+}
+
+#[derive(TS, Serialize, Clone, ToSchema)]
+#[ts(export, export_to = "../../db_types/RefreshTokenResponse.d.ts")]
+pub struct RefreshTokenResponse {
+    pub access_token: String,
 }

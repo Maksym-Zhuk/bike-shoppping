@@ -1,5 +1,6 @@
 use actix_web::{HttpResponse, Responder};
 
+pub mod auth_controller;
 pub mod order_controller;
 pub mod product_controller;
 

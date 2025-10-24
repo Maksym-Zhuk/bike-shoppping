@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 use utoipa::ToSchema;
-use uuid::Uuid;
 
 #[derive(TS, Serialize, Deserialize, Clone, ToSchema)]
 #[ts(export, export_to = "../../db_types/CreateOrderDto.d.ts")]

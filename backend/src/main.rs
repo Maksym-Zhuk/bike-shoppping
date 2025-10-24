@@ -54,14 +54,13 @@ async fn main() {
             .allowed_headers(vec!["Content-Type", "Authorization"])
             .max_age(3600);
 
+        let configure = web::scope("/api")
+            .wrap(cors)
+            .wrap(Governor::new(&governor_conf))
+            .configure(routes::init);
         App::new()
             .app_data(state.clone())
-            .service(
-                web::scope("/api")
-                    .wrap(cors)
-                    .wrap(Governor::new(&governor_conf))
-                    .configure(routes::init),
-            )
+            .service(configure)
             .service(
                 utoipa_swagger_ui::SwaggerUi::new("/docs/{_:.*}")
                     .url("/api-doc/openapi.json", openapi.clone()),

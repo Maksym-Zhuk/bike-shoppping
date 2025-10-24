@@ -15,9 +15,13 @@ use crate::{
     path = "/order/orders",
     responses(
         (status = 200, description = "List of all orders", body = [Order]),
+        (status = 401, description = "Unauthorized"),
         (status = 500, description = "Internal server error", body = ErrorResponse)
     ),
-    tag = "Orders"
+    tag = "Orders",
+    security(
+        ("bearer_auth" = [])  
+    )
 )]
 pub async fn get_all_orders(db: web::Data<AppState>) -> impl Responder {
     match order_service::get_all_orders(&db.mongo).await {
@@ -38,9 +42,13 @@ pub async fn get_all_orders(db: web::Data<AppState>) -> impl Responder {
     responses(
         (status = 201, description = "Order created successfully", body = MessageResponse),
         (status = 404, description = "Some products not found", body = MessageResponse),
+        (status = 401, description = "Unauthorized"),
         (status = 500, description = "Internal server error", body = ErrorResponse)
     ),
-    tag = "Orders"
+    tag = "Orders",
+    security(
+        ("bearer_auth" = [])  
+    )
 )]
 pub async fn create_order(
     db: web::Data<AppState>,
@@ -71,9 +79,13 @@ pub async fn create_order(
     responses(
         (status = 200, description = "Order found", body = Order),
         (status = 404, description = "Order not found", body = MessageResponse),
+        (status = 401, description = "Unauthorized"),
         (status = 500, description = "Internal server error", body = ErrorResponse)
     ),
-    tag = "Orders"
+    tag = "Orders",
+    security(
+        ("bearer_auth" = [])  
+    )
 )]
 pub async fn get_order(db: web::Data<AppState>, order_id: web::Path<String>) -> impl Responder {
     match order_service::get_order(&db.mongo, &order_id).await {
@@ -97,9 +109,13 @@ pub async fn get_order(db: web::Data<AppState>, order_id: web::Path<String>) -> 
     responses(
         (status = 200, description = "Order updated successfully", body = MessageResponse),
         (status = 404, description = "Order not found", body = MessageResponse),
+        (status = 401, description = "Unauthorized"),
         (status = 500, description = "Internal server error", body = ErrorResponse)
     ),
-    tag = "Orders"
+    tag = "Orders",
+    security(
+        ("bearer_auth" = [])  
+    )
 )]
 pub async fn update_order(
     db: web::Data<AppState>,
@@ -128,9 +144,13 @@ pub async fn update_order(
     responses(
         (status = 200, description = "Order deleted successfully", body = MessageResponse),
         (status = 404, description = "Order not found", body = MessageResponse),
+        (status = 401, description = "Unauthorized"),
         (status = 500, description = "Internal server error", body = ErrorResponse)
     ),
-    tag = "Orders"
+    tag = "Orders",
+    security(
+        ("bearer_auth" = [])  
+    )
 )]
 pub async fn delete_order(db: web::Data<AppState>, order_id: web::Path<String>) -> impl Responder {
     match order_service::delete_order(&db.mongo, &order_id).await {
