@@ -7,6 +7,7 @@ use crate::controllers::product_controller::{
     __path_create_product, __path_delete_product, __path_get_all_products,
     __path_get_most_advantageous, __path_get_product, __path_update_product,
 };
+use crate::controllers::user_controller::__path_me;
 use crate::dto::auth::{
     AuthResponse, LoginDto, RefreshTokenRequest, RefreshTokenResponse, RegisterDto, UserInfo,
 };
@@ -20,7 +21,7 @@ use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
 
 #[derive(OpenApi)]
 #[openapi(
-    paths(create_product, get_all_products, get_most_advantageous, get_product, update_product, delete_product, create_order, get_all_orders, get_order, update_order, delete_order, register, login, refresh_token),
+    paths(create_product, get_all_products, get_most_advantageous, get_product, update_product, delete_product, create_order, get_all_orders, get_order, update_order, delete_order, register, login, refresh_token, me),
     components(schemas(Product, CreateProductDto, UpdateProductDto, Order, CreateOrderDto, UpdateOrderDto, MessageResponse, ErrorResponse, UserInfo, LoginDto, RegisterDto, AuthResponse, RefreshTokenResponse, RefreshTokenRequest)),
     info(title = "Bike Shop API", version = "0.1.0"),
     servers(
@@ -30,7 +31,8 @@ use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
     tags(
         (name = "Products", description = "Product management endpoints"),
         (name = "Orders", description = "Order management endpoints"),
-        (name = "Auth", description = "Auth management endpoints")
+        (name = "Auth", description = "Auth management endpoints"),
+        (name = "Users", description = "Users management endpoints")
     )
 )]
 pub struct ApiDoc;
