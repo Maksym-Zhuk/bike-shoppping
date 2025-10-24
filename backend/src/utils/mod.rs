@@ -1,2 +1,2 @@
-mod hash;
-mod jwt;
+pub mod hash;
+pub mod jwt;

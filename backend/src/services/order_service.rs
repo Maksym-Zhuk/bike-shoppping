@@ -6,9 +6,9 @@ use mongodb::Database;
 use mongodb::bson::doc;
 use uuid::Uuid;
 
-use crate::models::{
-    order::{CreateOrderDto, Order, UpdateOrderDto},
-    product::Product,
+use crate::{
+    dto::order::{CreateOrderDto, UpdateOrderDto},
+    models::{order::Order, product::Product},
 };
 
 pub async fn get_all_orders(db: &Database) -> mongodb::error::Result<Vec<Order>> {

@@ -2,8 +2,9 @@ use actix_web::{HttpResponse, Responder, web};
 
 use crate::{
     AppState,
+    dto::order::{CreateOrderDto, UpdateOrderDto},
     models::{
-        order::{CreateOrderDto, Order, UpdateOrderDto},
+        order::Order,
         res::{ErrorResponse, MessageResponse},
     },
     services::order_service,

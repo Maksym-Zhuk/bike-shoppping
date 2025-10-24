@@ -6,8 +6,10 @@ use crate::controllers::product_controller::{
     __path_create_product, __path_delete_product, __path_get_all_products,
     __path_get_most_advantageous, __path_get_product, __path_update_product,
 };
-use crate::models::order::{CreateOrderDto, Order, UpdateOrderDto};
-use crate::models::product::{CreateProductDto, Product, UpdateProductDto};
+use crate::dto::order::{CreateOrderDto, UpdateOrderDto};
+use crate::dto::product::{CreateProductDto, UpdateProductDto};
+use crate::models::order::Order;
+use crate::models::product::Product;
 use crate::models::res::{ErrorResponse, MessageResponse};
 use utoipa::OpenApi;
 

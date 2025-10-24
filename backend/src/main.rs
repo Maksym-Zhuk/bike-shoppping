@@ -18,9 +18,12 @@ mod api_docs;
 mod config;
 mod controllers;
 mod db;
+mod dto;
+mod middleware;
 mod models;
 mod routes;
 mod services;
+mod utils;
 
 struct AppState {
     mongo: mongodb::Database,

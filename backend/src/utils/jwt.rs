@@ -1,4 +1,5 @@
 use anyhow::Ok;
+use anyhow::{Context, Result};
 use chrono::{Duration, Utc};
 use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode};
 use serde::{Deserialize, Serialize};
@@ -35,29 +36,49 @@ fn get_jwt_secret() -> String {
         .unwrap_or_else(|_| "development-secret-key-change-in-production".to_string())
 }
 
-pub fn generate_access_token(user_id: String) -> Result<String, jsonwebtoken::errors::Error> {
-    let claims = Claims::new(user_id, ACCESS_TOKEN_DURATION_MINUTES);
+fn get_access_token_duration() -> i64 {
+    env::var("ACCESS_TOKEN_DURATION_MINUTES")
+        .ok()
+        .and_then(|s| s.parse::<i64>().ok())
+        .unwrap_or(60)
+}
+
+fn get_refresh_token_duration() -> i64 {
+    env::var("REFRESH_TOKEN_DURATION_DAYS")
+        .ok()
+        .and_then(|s| s.parse::<i64>().ok())
+        .unwrap_or(30)
+}
+
+pub fn generate_access_token(user_id: String) -> Result<String> {
+    let duration = get_access_token_duration();
+    let claims = Claims::new(user_id, duration);
 
     encode(
         &Header::default(),
         &claims,
         &EncodingKey::from_secret(get_jwt_secret().as_ref()),
     )
+    .context("Failed to generate access token")
 }
 
-pub fn generate_refresh_token(user_id: String) -> Result<String, jsonwebtoken::errors::Error> {
-    let claims = Claims::new(user_id, REFRESH_TOKEN_DURATION_DAYS * 24 * 60);
+pub fn generate_refresh_token(user_id: String) -> Result<String> {
+    let duration = get_refresh_token_duration();
+    let claims = Claims::new(user_id, duration * 24 * 60);
 
     encode(
         &Header::default(),
         &claims,
         &EncodingKey::from_secret(get_jwt_secret().as_ref()),
     )
+    .context("Failed to generate refresh token")
 }
 
-pub fn generate_token_pair(user_id: String) -> Result<TokenPair, jsonwebtoken::errors::Error> {
-    let access_token = generate_access_token(user_id.clone());
-    let refresh_token = generate_refresh_token(user_id);
+pub fn generate_token_pair(user_id: String) -> Result<TokenPair> {
+    let access_token = generate_access_token(user_id.clone())
+        .context("Failed to generate access token in pair")?;
+    let refresh_token =
+        generate_refresh_token(user_id).context("Failed to generate refresh token in pair")?;
 
     Ok(TokenPair {
         access_token,
@@ -65,13 +86,14 @@ pub fn generate_token_pair(user_id: String) -> Result<TokenPair, jsonwebtoken::e
     })
 }
 
-pub fn validate_token(token: String) -> Result<Claims, jsonwebtoken::errors::Error> {
+pub fn validate_token(token: String) -> Result<Claims> {
     let validation = Validation::new(Algorithm::HS256);
     let token_data = decode(
         token,
         &DecodingKey::from_secret(get_jwt_secret().as_ref()),
         &validation,
-    );
+    )
+    .context("Failed to decode and validate token")?;
 
     Ok(token_data.claims)
 }

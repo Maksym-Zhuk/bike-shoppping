@@ -3,8 +3,9 @@ use validator::Validate;
 
 use crate::{
     AppState,
+    dto::product::{CreateProductDto, UpdateProductDto},
     models::{
-        product::{CreateProductDto, Product, UpdateProductDto},
+        product::Product,
         res::{ErrorResponse, MessageResponse},
     },
     services::product_service,

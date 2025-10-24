@@ -6,7 +6,8 @@ use mongodb::{Database, options::FindOneOptions};
 use redis::{AsyncCommands, aio::ConnectionManager};
 use uuid::Uuid;
 
-use crate::models::product::{CreateProductDto, Product, UpdateProductDto};
+use crate::dto::product::{CreateProductDto, UpdateProductDto};
+use crate::models::product::Product;
 
 pub async fn get_all_products(db: &Database) -> mongodb::error::Result<Vec<Product>> {
     let collection = db.collection::<Product>("products");
