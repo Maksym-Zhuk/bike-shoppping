@@ -1,11 +1,13 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Pressable } from "react-native";
 import SearchBar from "./SearchBar";
 import BannerShape from "./BannerShape";
 import AppIcons from "./AppIcons";
 import Products from "./Products";
+import {useRouter} from "expo-router"
 
 export default function HomePage() {
+  var router = useRouter();
     return (
         <View className="flex-1">
             <Image
@@ -18,15 +20,22 @@ export default function HomePage() {
                 <SearchBar />
             </View>
 
-            <BannerShape className="-mt-5">
-                <View className="w-full items-center justify-center -mt-[50px] relative">
+            <BannerShape className="mt-5">
+                <Pressable onPress={()=>{
+                  router.push({
+                    pathname: "/product",
+                    params: {
+                      a: "1"
+                    }
+                  });
+                }}className="w-full items-center justify-center relative">
                     <Image
                         source={require("../../../assets/images/banner-bike-sample.png")}
                         className="w-[90%] h-[170px] z-10"
                         resizeMode="contain"
                     />
                     <Text className="absolute text-[rgba(255,255,255,0.7)] text-[32px] font-bold top-[175px] left-[25px]">30% Off</Text>
-                </View>
+                </Pressable>
             </BannerShape>
 
             <AppIcons />
