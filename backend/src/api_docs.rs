@@ -13,9 +13,10 @@ use crate::dto::auth::{
 };
 use crate::dto::order::{CreateOrderDto, UpdateOrderDto};
 use crate::dto::product::{CreateProductDto, UpdateProductDto};
+use crate::errors::ErrorResponse;
 use crate::models::order::Order;
 use crate::models::product::Product;
-use crate::models::res::{ErrorResponse, MessageResponse};
+use crate::models::res::MessageResponse;
 use utoipa::OpenApi;
 use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
 

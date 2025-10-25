@@ -1,14 +1,12 @@
-use anyhow::{Result, anyhow};
 use bson::{Uuid, doc};
 use mongodb::Database;
 
-use crate::{dto::auth::UserInfo, models::user::User};
+use crate::{dto::auth::UserInfo, errors::AppErrors, models::user::User};
 
-pub async fn me(db: &Database, user_id: String) -> Result<UserInfo> {
+pub async fn me(db: &Database, user_id: String) -> Result<UserInfo, AppErrors> {
     let collection = db.collection::<User>("users");
 
-    let uuid = Uuid::parse_str(user_id)
-        .map_err(|e| mongodb::error::Error::custom(format!("Invalid UUID: {}", e)))?;
+    let uuid = Uuid::parse_str(user_id).map_err(|_| AppErrors::InvalidUUID)?;
 
     let user = collection.find_one(doc! {"_id": uuid}).await?;
 
@@ -18,6 +16,6 @@ pub async fn me(db: &Database, user_id: String) -> Result<UserInfo> {
             email: user.email,
             name: user.name,
         }),
-        None => Err(anyhow!("User not found")),
+        None => Err(AppErrors::NotFound("User".to_string())),
     }
 }

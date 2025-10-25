@@ -7,9 +7,10 @@ use redis::{AsyncCommands, aio::ConnectionManager};
 use uuid::Uuid;
 
 use crate::dto::product::{CreateProductDto, UpdateProductDto};
+use crate::errors::AppErrors;
 use crate::models::product::Product;
 
-pub async fn get_all_products(db: &Database) -> mongodb::error::Result<Vec<Product>> {
+pub async fn get_all_products(db: &Database) -> Result<Vec<Product>, AppErrors> {
     let collection = db.collection::<Product>("products");
 
     let mut cursor = collection.find(doc! {}).await?;
@@ -26,7 +27,7 @@ pub async fn create_product(
     db: &Database,
     mut redis: ConnectionManager,
     new_product_data: web::Json<CreateProductDto>,
-) -> mongodb::error::Result<String> {
+) -> Result<String, AppErrors> {
     let new_product = Product {
         _id: Uuid::new_v4(),
         name: new_product_data.name.to_string(),
@@ -45,16 +46,16 @@ pub async fn create_product(
     Ok(String::from("Product created successfully"))
 }
 
-pub async fn get_product(
-    db: &Database,
-    product_id: &str,
-) -> mongodb::error::Result<Option<Product>> {
+pub async fn get_product(db: &Database, product_id: &str) -> Result<Product, AppErrors> {
     let collection = db.collection::<Product>("products");
 
     let uuid = Uuid::parse_str(product_id)
         .map_err(|e| mongodb::error::Error::custom(format!("Invalid UUID: {}", e)))?;
 
-    let product = collection.find_one(doc! {"_id": uuid}).await?;
+    let product = collection
+        .find_one(doc! {"_id": uuid})
+        .await?
+        .ok_or_else(|| AppErrors::NotFound(product_id.to_string()))?;
     Ok(product)
 }
 
@@ -62,7 +63,7 @@ pub async fn update_product(
     db: &Database,
     mut redis: ConnectionManager,
     new_product_data: web::Json<UpdateProductDto>,
-) -> mongodb::error::Result<Option<String>> {
+) -> Result<String, AppErrors> {
     let collection = db.collection::<Product>("products");
 
     let uuid = Uuid::parse_str(&new_product_data._id)
@@ -77,33 +78,32 @@ pub async fn update_product(
 
     let _: std::result::Result<(), _> = redis.del("most_advantageous").await;
 
-    Ok(Some(String::from("Product updated successfully")))
+    Ok(String::from("Product updated successfully"))
 }
 
 pub async fn delete_product(
     db: &Database,
     mut redis: ConnectionManager,
     product_id: &str,
-) -> mongodb::error::Result<Option<String>> {
+) -> Result<String, AppErrors> {
     let collection = db.collection::<Product>("products");
 
-    let uuid = Uuid::parse_str(product_id)
-        .map_err(|e| mongodb::error::Error::custom(format!("Invalid UUID: {}", e)))?;
+    let uuid = Uuid::parse_str(product_id).map_err(|_| AppErrors::InvalidUUID)?;
 
     collection.delete_one(doc! {"_id": uuid}).await?;
 
     let _: std::result::Result<(), _> = redis.del("most_advantageous").await;
 
-    Ok(Some(String::from("Product deleted successfully")))
+    Ok(String::from("Product deleted successfully"))
 }
 
 pub async fn get_most_advantageous(
     db: &Database,
     mut redis: ConnectionManager,
-) -> mongodb::error::Result<Option<Product>> {
+) -> Result<Product, AppErrors> {
     if let Ok(cached_json) = redis.get::<_, String>("most_advantageous").await {
         if let Ok(best_product) = serde_json::from_str::<Product>(&cached_json) {
-            return Ok(Some(best_product));
+            return Ok(best_product);
         }
     }
 
@@ -113,12 +113,14 @@ pub async fn get_most_advantageous(
         .sort(doc! { "discount": -1 })
         .build();
 
-    let best_product = collection.find_one(doc! {}).with_options(options).await?;
+    let best_product = collection
+        .find_one(doc! {})
+        .with_options(options)
+        .await?
+        .ok_or(AppErrors::NotFound("Product".to_string()))?;
 
-    if let Some(ref product) = best_product {
-        if let Ok(json) = serde_json::to_string(product) {
-            let _: std::result::Result<(), _> = redis.set_ex("most_advantageous", json, 3600).await;
-        }
+    if let Ok(json) = serde_json::to_string(&best_product) {
+        let _: std::result::Result<(), _> = redis.set_ex("most_advantageous", json, 3600).await;
     }
 
     Ok(best_product)

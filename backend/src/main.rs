@@ -19,6 +19,7 @@ mod config;
 mod controllers;
 mod db;
 mod dto;
+mod errors;
 mod middleware;
 mod models;
 mod routes;

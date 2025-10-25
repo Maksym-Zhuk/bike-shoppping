@@ -1,9 +1,9 @@
 use crate::{
     dto::auth::{AuthResponse, LoginDto, RefreshTokenRequest, RefreshTokenResponse},
+    errors::{AppErrors, auth_error::AuthError, hash_error::HashError, jwt_error::JWTError},
     utils::{hash, jwt},
 };
 use actix_web::web;
-use anyhow::{Result, anyhow};
 use bson::doc;
 use mongodb::Database;
 use uuid::Uuid;
@@ -13,11 +13,14 @@ use crate::{
     models::user::User,
 };
 
-pub async fn register(db: &Database, data: web::Json<RegisterDto>) -> Result<AuthResponse> {
+pub async fn register(
+    db: &Database,
+    data: web::Json<RegisterDto>,
+) -> Result<AuthResponse, AppErrors> {
     let password_hash = match hash::hash_password(&data.password) {
         Ok(h) => h,
         Err(_) => {
-            return Err(anyhow!("Failed to process password"));
+            return Err(AppErrors::Hash(HashError::FailedHash));
         }
     };
 
@@ -36,7 +39,7 @@ pub async fn register(db: &Database, data: web::Json<RegisterDto>) -> Result<Aut
         Ok(t) => t,
         Err(err) => {
             eprintln!("❌ Token generation error: {:#}", err);
-            return Err(anyhow!("Failed to generate tokens"));
+            return Err(AppErrors::Jwt(JWTError::FailedGenerateTokens));
         }
     };
 
@@ -51,7 +54,7 @@ pub async fn register(db: &Database, data: web::Json<RegisterDto>) -> Result<Aut
     })
 }
 
-pub async fn login(db: &Database, data: web::Json<LoginDto>) -> Result<AuthResponse> {
+pub async fn login(db: &Database, data: web::Json<LoginDto>) -> Result<AuthResponse, AppErrors> {
     let collections = db.collection::<User>("users");
 
     let user = collections.find_one(doc! {"email": &data.email}).await?;
@@ -62,20 +65,20 @@ pub async fn login(db: &Database, data: web::Json<LoginDto>) -> Result<AuthRespo
                 Ok(valid) => valid,
                 Err(err) => {
                     eprintln!("❌ Password verification error: {:#}", err);
-                    return Err(anyhow!("Authentication failed"));
+                    return Err(AppErrors::Auth(AuthError::AuthFailed));
                 }
             };
 
             if !is_valid {
                 println!("❌ Invalid password for: {}", user.email);
-                return Err(anyhow!("Invalid email or password"));
+                return Err(AppErrors::Auth(AuthError::InvalidEmailORPassword));
             }
 
             let tokens = match jwt::generate_token_pair(user._id.to_string()) {
                 Ok(t) => t,
                 Err(err) => {
                     eprintln!("❌ Token generation error: {:#}", err);
-                    return Err(anyhow!("Failed to generate tokens"));
+                    return Err(AppErrors::Jwt(JWTError::FailedGenerateTokens));
                 }
             };
 
@@ -90,17 +93,19 @@ pub async fn login(db: &Database, data: web::Json<LoginDto>) -> Result<AuthRespo
             })
         }
         None => {
-            return Err(anyhow!("Unable to find user"));
+            return Err(AppErrors::NotFound("User".to_string()));
         }
     }
 }
 
-pub async fn refresh_token(data: web::Json<RefreshTokenRequest>) -> Result<RefreshTokenResponse> {
+pub async fn refresh_token(
+    data: web::Json<RefreshTokenRequest>,
+) -> Result<RefreshTokenResponse, AppErrors> {
     let claims = match jwt::validate_token(data.refresh_token.clone()) {
         Ok(c) => c,
         Err(err) => {
             println!("❌ Invalid refresh token: {}", err);
-            return Err(anyhow!("Invalid or expired refresh token"));
+            return Err(AppErrors::Jwt(JWTError::InvalidRefreshToken));
         }
     };
 

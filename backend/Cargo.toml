@@ -30,3 +30,4 @@ jsonwebtoken = { version = "10.1.0", features = ["rust_crypto"] }
 argon2 = "0.5"
 chrono = { version = "0.4", features = ["serde"] }
 actix-rt = "2"
+thiserror = "2.0"

@@ -1,9 +1,9 @@
-use anyhow::Ok;
-use anyhow::{Context, Result};
 use chrono::{Duration, Utc};
 use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode};
 use serde::{Deserialize, Serialize};
 use std::env;
+
+use crate::errors::{AppErrors, jwt_error::JWTError};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Claims {
@@ -50,7 +50,7 @@ fn get_refresh_token_duration() -> i64 {
         .unwrap_or(30)
 }
 
-pub fn generate_access_token(user_id: String) -> Result<String> {
+pub fn generate_access_token(user_id: String) -> Result<String, AppErrors> {
     let duration = get_access_token_duration();
     let claims = Claims::new(user_id, duration);
 
@@ -59,10 +59,10 @@ pub fn generate_access_token(user_id: String) -> Result<String> {
         &claims,
         &EncodingKey::from_secret(get_jwt_secret().as_ref()),
     )
-    .context("Failed to generate access token")
+    .map_err(|_| AppErrors::Jwt(JWTError::FailedGenerateAccessToken))
 }
 
-pub fn generate_refresh_token(user_id: String) -> Result<String> {
+pub fn generate_refresh_token(user_id: String) -> Result<String, AppErrors> {
     let duration = get_refresh_token_duration();
     let claims = Claims::new(user_id, duration * 24 * 60);
 
@@ -71,14 +71,14 @@ pub fn generate_refresh_token(user_id: String) -> Result<String> {
         &claims,
         &EncodingKey::from_secret(get_jwt_secret().as_ref()),
     )
-    .context("Failed to generate refresh token")
+    .map_err(|_| AppErrors::Jwt(JWTError::FailedGenerateRefreshToken))
 }
 
-pub fn generate_token_pair(user_id: String) -> Result<TokenPair> {
+pub fn generate_token_pair(user_id: String) -> Result<TokenPair, AppErrors> {
     let access_token = generate_access_token(user_id.clone())
-        .context("Failed to generate access token in pair")?;
-    let refresh_token =
-        generate_refresh_token(user_id).context("Failed to generate refresh token in pair")?;
+        .map_err(|_| AppErrors::Jwt(JWTError::FailedGenerateAccessToken))?;
+    let refresh_token = generate_refresh_token(user_id)
+        .map_err(|_| AppErrors::Jwt(JWTError::FailedGenerateRefreshToken))?;
 
     Ok(TokenPair {
         access_token,
@@ -86,14 +86,14 @@ pub fn generate_token_pair(user_id: String) -> Result<TokenPair> {
     })
 }
 
-pub fn validate_token(token: String) -> Result<Claims> {
+pub fn validate_token(token: String) -> Result<Claims, AppErrors> {
     let validation = Validation::new(Algorithm::HS256);
     let token_data = decode(
         token,
         &DecodingKey::from_secret(get_jwt_secret().as_ref()),
         &validation,
     )
-    .context("Failed to decode and validate token")?;
+    .map_err(|_| AppErrors::Jwt(JWTError::FailedDecode))?;
 
     Ok(token_data.claims)
 }
