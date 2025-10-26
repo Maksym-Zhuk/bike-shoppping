@@ -1,5 +1,5 @@
 use crate::{
-    dto::auth::{AuthResponse, LoginDto, RefreshTokenRequest, RefreshTokenResponse},
+    dto::auth::{AuthResponse, LoginDto, RefreshTokenRequest},
     errors::{AppErrors, auth_error::AuthError, hash_error::HashError, jwt_error::JWTError},
     utils::{hash, jwt},
 };
@@ -98,9 +98,7 @@ pub async fn login(db: &Database, data: web::Json<LoginDto>) -> Result<AuthRespo
     }
 }
 
-pub async fn refresh_token(
-    data: web::Json<RefreshTokenRequest>,
-) -> Result<RefreshTokenResponse, AppErrors> {
+pub async fn refresh_token(data: web::Json<RefreshTokenRequest>) -> Result<String, AppErrors> {
     let claims = match jwt::validate_token(data.refresh_token.clone()) {
         Ok(c) => c,
         Err(err) => {
@@ -111,5 +109,5 @@ pub async fn refresh_token(
 
     let access_token = jwt::generate_access_token(claims.sub)?;
 
-    Ok(RefreshTokenResponse { access_token })
+    Ok(access_token)
 }

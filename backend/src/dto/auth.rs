@@ -49,9 +49,3 @@ pub struct UserInfo {
 pub struct RefreshTokenRequest {
     pub refresh_token: String,
 }
-
-#[derive(TS, Serialize, Clone, ToSchema)]
-#[ts(export, export_to = "../../db_types/RefreshTokenResponse.d.ts")]
-pub struct RefreshTokenResponse {
-    pub access_token: String,
-}

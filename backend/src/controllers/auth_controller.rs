@@ -2,10 +2,7 @@ use actix_web::{HttpResponse, Result, web};
 use validator::Validate;
 
 use crate::{
-    AppState,
-    dto::auth::{AuthResponse, LoginDto, RefreshTokenRequest, RefreshTokenResponse, RegisterDto},
-    errors::AppErrors,
-    services::auth_service,
+    dto::auth::{LoginDto, RefreshTokenRequest, RegisterDto, UserInfo}, errors::AppErrors, models::res::MessageResponse, services::auth_service, AppState
 };
 
 #[utoipa::path(
@@ -13,7 +10,14 @@ use crate::{
     path = "/auth/register",
     request_body = RegisterDto,
     responses(
-        (status = 200, description = "Successful registration", body = AuthResponse),
+        (   
+            status = 200, 
+            description = "Successful registration", 
+            body = UserInfo, 
+            headers(
+                ("X-Access-Token" = String, description = "JWT access token for authentication"),
+                ("X-Refresh-Token" = String, description = "JWT refresh token for obtaining new access token")
+            )),
         (status = 400, description = "Validation failed", body = inline(Object), example = json!({
             "error": "validation_error",
             "message": "Validation failed"
@@ -37,7 +41,10 @@ pub async fn register(
     }
 
     let res = auth_service::register(&db.mongo, data).await?;
-    Ok(HttpResponse::Ok().json(res))
+    Ok(HttpResponse::Ok()
+        .insert_header(("X-Access-Token", res.access_token))
+        .insert_header(("X-Refresh-Token", res.refresh_token))
+        .json(res.user))
 }
 
 #[utoipa::path(
@@ -45,7 +52,15 @@ pub async fn register(
     path = "/auth/login",
     request_body = LoginDto,
     responses(
-        (status = 200, description = "Successful login", body = AuthResponse),
+        (
+            status = 200, 
+            description = "Successful login", 
+            body = UserInfo,
+            headers(
+                ("X-Access-Token" = String, description = "JWT access token for authentication"),
+                ("X-Refresh-Token" = String, description = "JWT refresh token for obtaining new access token")
+            )
+        ),
         (status = 400, description = "Validation failed", body = inline(Object), example = json!({
             "error": "validation_error",
             "message": "Validation failed"
@@ -73,7 +88,10 @@ pub async fn login(
     }
 
     let res = auth_service::login(&db.mongo, data).await?;
-    Ok(HttpResponse::Ok().json(res))
+    Ok(HttpResponse::Ok()
+        .insert_header(("X-Access-Token", res.access_token))
+        .insert_header(("X-Refresh-Token", res.refresh_token))
+        .json(res.user))
 }
 
 #[utoipa::path(
@@ -81,7 +99,13 @@ pub async fn login(
     path = "/auth/refresh_token",
     request_body = RefreshTokenRequest,
     responses(
-        (status = 200, description = "Token refreshed successfully", body = RefreshTokenResponse),
+        (
+            status = 200, 
+            description = "Token refreshed successfully", 
+            body = MessageResponse, 
+            headers(
+                ("X-Access-Token" = String, description = "JWT access token for authentication"),
+            )),
         (status = 401, description = "Invalid refresh token", body = inline(Object), example = json!({
             "error": "invalid_refresh_token",
             "message": "Invalid refresh token"
@@ -97,5 +121,7 @@ pub async fn refresh_token(
     data: web::Json<RefreshTokenRequest>,
 ) -> Result<HttpResponse, AppErrors> {
     let res = auth_service::refresh_token(data).await?;
-    Ok(HttpResponse::Ok().json(res))
+    Ok(HttpResponse::Ok().insert_header(("X-Access-Token", res)).json(MessageResponse {
+        message: "Token refreshed successfully".to_string()
+    }))
 }
