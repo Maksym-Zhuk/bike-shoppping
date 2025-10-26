@@ -1,12 +1,11 @@
-use std::future::{Ready, ready};
-
+use crate::utils::jwt;
 use actix_web::{
-    Error, HttpMessage,
+    Error, HttpMessage, HttpResponse,
+    body::EitherBody,
     dev::{Service, ServiceRequest, ServiceResponse, Transform, forward_ready},
 };
 use futures_util::future::LocalBoxFuture;
-
-use crate::utils::jwt;
+use std::future::{Ready, ready};
 
 pub struct JwtMiddleware;
 
@@ -16,7 +15,7 @@ where
     S::Future: 'static,
     B: 'static,
 {
-    type Response = ServiceResponse<B>;
+    type Response = ServiceResponse<EitherBody<B>>;
     type Error = Error;
     type InitError = ();
     type Transform = JwtMiddlewareService<S>;
@@ -37,57 +36,54 @@ where
     S::Future: 'static,
     B: 'static,
 {
-    type Response = ServiceResponse<B>;
+    type Response = ServiceResponse<EitherBody<B>>;
     type Error = Error;
     type Future = LocalBoxFuture<'static, Result<Self::Response, Self::Error>>;
 
     forward_ready!(service);
 
     fn call(&self, req: ServiceRequest) -> Self::Future {
-        let auth_header = req.headers().get("Authorization");
-        let token = match auth_header {
-            Some(header_value) => match header_value.to_str() {
-                Ok(header_str) => {
-                    if header_str.starts_with("Bearer ") {
-                        Some(header_str[7..].to_string())
-                    } else {
-                        None
-                    }
+        let token = req
+            .headers()
+            .get("Authorization")
+            .and_then(|h| h.to_str().ok())
+            .and_then(|h| h.strip_prefix("Bearer "));
+
+        match token {
+            Some(token) => match jwt::validate_token(token.to_string()) {
+                Ok(claims) => {
+                    req.extensions_mut().insert(claims.clone());
+                    req.extensions_mut().insert(claims.role.clone());
+
+                    let fut = self.service.call(req);
+                    Box::pin(async move {
+                        let res = fut.await?;
+                        Ok(res.map_into_left_body())
+                    })
                 }
-                Err(_) => None,
+                Err(err) => {
+                    let (req, _) = req.into_parts();
+                    let response = HttpResponse::Unauthorized()
+                        .json(serde_json::json!({
+                            "error": "invalid_token",
+                            "message": format!("Invalid token: {}", err)
+                        }))
+                        .map_into_right_body();
+
+                    Box::pin(async move { Ok(ServiceResponse::new(req, response)) })
+                }
             },
-            None => None,
-        };
-
-        let token = match token {
-            Some(t) => t,
             None => {
-                return Box::pin(async move {
-                    Err(actix_web::error::ErrorUnauthorized(
-                        "Missing or invalid Authorization header",
-                    ))
-                });
+                let (req, _) = req.into_parts();
+                let response = HttpResponse::Unauthorized()
+                    .json(serde_json::json!({
+                        "error": "missing_token",
+                        "message": "Missing or invalid Authorization header"
+                    }))
+                    .map_into_right_body();
+
+                Box::pin(async move { Ok(ServiceResponse::new(req, response)) })
             }
-        };
-
-        match jwt::validate_token(token) {
-            Ok(claims) => {
-                req.extensions_mut().insert(claims);
-
-                let fut = self.service.call(req);
-
-                Box::pin(async move {
-                    let res = fut.await?;
-
-                    Ok(res)
-                })
-            }
-            Err(err) => Box::pin(async move {
-                Err(actix_web::error::ErrorUnauthorized(format!(
-                    "Invalid token: {}",
-                    err
-                )))
-            }),
         }
     }
 }

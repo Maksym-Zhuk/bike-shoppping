@@ -3,7 +3,7 @@ use actix_web::{HttpResponse, Result, web};
 use crate::{
     AppState,
     dto::order::{CreateOrderDto, UpdateOrderDto},
-    errors::AppErrors,
+    errors::{AppErrors, ErrorResponse},
     models::order::Order,
     services::order_service,
 };
@@ -17,6 +17,12 @@ use crate::{
             "error": "jwt_error",
             "message": "Authorization error"
         })),
+        (status = 403, description = "Not enough rights", body = ErrorResponse,
+            example = json!({
+                "error": "insufficient_permissions",
+                "message": "Necessary role: Admin"
+            })
+        ),
         (status = 500, description = "Internal server error", body = inline(Object), example = json!({
             "error": "database_error",
             "message": "Database error"
@@ -40,13 +46,19 @@ pub async fn get_all_orders(db: web::Data<AppState>) -> Result<HttpResponse, App
         (status = 201, description = "Order created successfully", body = inline(Object), example = json!({
             "message": "Order created successfully"
         })),
-        (status = 404, description = "Some products not found", body = inline(Object), example = json!({
-            "error": "not_found",
-            "message": "Some product not found"
-        })),
         (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
             "error": "jwt_error",
             "message": "Authorization error"
+        })),
+        (status = 403, description = "Not enough rights", body = ErrorResponse,
+            example = json!({
+                "error": "insufficient_permissions",
+                "message": "Necessary role: Admin"
+            })
+        ),
+        (status = 404, description = "Some products not found", body = inline(Object), example = json!({
+            "error": "not_found",
+            "message": "Some product not found"
         })),
         (status = 500, description = "Internal server error", body = inline(Object), example = json!({
             "error": "database_error",
@@ -80,13 +92,13 @@ pub async fn create_order(
             "error": "invalid_uuid",
             "message": "Invalid UUID format"
         })),
-        (status = 404, description = "Order not found", body = inline(Object), example = json!({
-            "error": "not_found",
-            "message": "Order not found"
-        })),
         (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
             "error": "jwt_error",
             "message": "Authorization error"
+        })),
+        (status = 404, description = "Order not found", body = inline(Object), example = json!({
+            "error": "not_found",
+            "message": "Order not found"
         })),
         (status = 500, description = "Internal server error", body = inline(Object), example = json!({
             "error": "database_error",
@@ -118,13 +130,19 @@ pub async fn get_order(
             "error": "invalid_uuid",
             "message": "Invalid UUID format"
         })),
-        (status = 404, description = "Order not found", body = inline(Object), example = json!({
-            "error": "not_found",
-            "message": "Order not found"
-        })),
         (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
             "error": "jwt_error",
             "message": "Authorization error"
+        })),
+        (status = 403, description = "Not enough rights", body = ErrorResponse,
+            example = json!({
+                "error": "insufficient_permissions",
+                "message": "Necessary role: Admin"
+            })
+        ),
+        (status = 404, description = "Order not found", body = inline(Object), example = json!({
+            "error": "not_found",
+            "message": "Order not found"
         })),
         (status = 500, description = "Internal server error", body = inline(Object), example = json!({
             "error": "database_error",
@@ -160,13 +178,19 @@ pub async fn update_order(
             "error": "invalid_uuid",
             "message": "Invalid UUID format"
         })),
-        (status = 404, description = "Order not found", body = inline(Object), example = json!({
-            "error": "not_found",
-            "message": "Order not found"
-        })),
         (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
             "error": "jwt_error",
             "message": "Authorization error"
+        })),
+        (status = 403, description = "Not enough rights", body = ErrorResponse,
+            example = json!({
+                "error": "insufficient_permissions",
+                "message": "Necessary role: Admin"
+            })
+        ),
+        (status = 404, description = "Order not found", body = inline(Object), example = json!({
+            "error": "not_found",
+            "message": "Order not found"
         })),
         (status = 500, description = "Internal server error", body = inline(Object), example = json!({
             "error": "database_error",

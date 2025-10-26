@@ -74,13 +74,7 @@ impl ResponseError for AppErrors {
                     "invalid_refresh_token",
                     "Invalid refresh token".to_string(),
                     None,
-                ),
-                _ => (
-                    StatusCode::UNAUTHORIZED,
-                    "jwt_error",
-                    "Authorization error".to_string(),
-                    Some(e.to_string()),
-                ),
+                )
             },
 
             AppErrors::Auth(e) => match e {
@@ -95,12 +89,6 @@ impl ResponseError for AppErrors {
                     "invalid_credentials",
                     "Invalid email or password".to_string(),
                     None,
-                ),
-                _ => (
-                    StatusCode::UNAUTHORIZED,
-                    "auth_error",
-                    "Auth error".to_string(),
-                    Some(e.to_string()),
                 ),
             },
 

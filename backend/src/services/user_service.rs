@@ -15,6 +15,7 @@ pub async fn me(db: &Database, user_id: String) -> Result<UserInfo, AppErrors> {
             id: user._id.to_string(),
             email: user.email,
             name: user.name,
+            role: user.role,
         }),
         None => Err(AppErrors::NotFound("User".to_string())),
     }

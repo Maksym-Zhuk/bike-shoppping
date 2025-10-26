@@ -4,7 +4,7 @@ use validator::Validate;
 use crate::{
     AppState,
     dto::product::{CreateProductDto, UpdateProductDto},
-    errors::AppErrors,
+    errors::{AppErrors, ErrorResponse},
     models::product::Product,
     services::product_service,
 };
@@ -38,18 +38,30 @@ pub async fn get_all_products(state: web::Data<AppState>) -> Result<HttpResponse
             "error": "validation_error",
             "message": "Validation failed"
         })),
+        (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
+            "error": "jwt_error",
+            "message": "Authorization error"
+        })),
+        (status = 403, description = "Not enough rights", body = ErrorResponse,
+            example = json!({
+                "error": "insufficient_permissions",
+                "message": "Necessary role: Admin"
+            })
+        ),
         (status = 500, description = "Internal server error", body = inline(Object), example = json!({
             "error": "database_error",
             "message": "Database error"
         }))
     ),
-    tag = "Products"
+    tag = "Products",
+    security(
+        ("bearer_auth" = [])  
+    )
 )]
 pub async fn create_product(
     state: web::Data<AppState>,
     new_product_data: web::Json<CreateProductDto>,
 ) -> Result<HttpResponse, AppErrors> {
-    // Валідація
     if let Err(e) = new_product_data.validate() {
         return Ok(HttpResponse::BadRequest().json(serde_json::json!({
             "error": "validation_error",
@@ -109,6 +121,16 @@ pub async fn get_product(
             "error": "invalid_uuid",
             "message": "Invalid UUID format"
         })),
+        (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
+            "error": "jwt_error",
+            "message": "Authorization error"
+        })),
+        (status = 403, description = "Not enough rights", body = ErrorResponse,
+            example = json!({
+                "error": "insufficient_permissions",
+                "message": "Necessary role: Admin"
+            })
+        ),
         (status = 404, description = "Product not found", body = inline(Object), example = json!({
             "error": "not_found",
             "message": "Product not found"
@@ -118,7 +140,10 @@ pub async fn get_product(
             "message": "Database error"
         }))
     ),
-    tag = "Products"
+    tag = "Products",
+    security(
+        ("bearer_auth" = [])  
+    )
 )]
 pub async fn update_product(
     state: web::Data<AppState>,
@@ -146,6 +171,16 @@ pub async fn update_product(
             "error": "invalid_uuid",
             "message": "Invalid UUID format"
         })),
+        (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
+            "error": "jwt_error",
+            "message": "Authorization error"
+        })),
+        (status = 403, description = "Not enough rights", body = ErrorResponse,
+            example = json!({
+                "error": "insufficient_permissions",
+                "message": "Necessary role: Admin"
+            })
+        ),
         (status = 404, description = "Product not found", body = inline(Object), example = json!({
             "error": "not_found",
             "message": "Product not found"
@@ -155,7 +190,10 @@ pub async fn update_product(
             "message": "Database error"
         }))
     ),
-    tag = "Products"
+    tag = "Products",
+    security(
+        ("bearer_auth" = [])  
+    )
 )]
 pub async fn delete_product(
     state: web::Data<AppState>,

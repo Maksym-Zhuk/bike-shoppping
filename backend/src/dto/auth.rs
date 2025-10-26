@@ -3,6 +3,8 @@ use ts_rs::TS;
 use utoipa::ToSchema;
 use validator::Validate;
 
+use crate::models::role::Role;
+
 #[derive(TS, Serialize, Deserialize, Clone, ToSchema, Validate)]
 #[ts(export, export_to = "../../db_types/LoginDto.d.ts")]
 pub struct LoginDto {
@@ -42,6 +44,7 @@ pub struct UserInfo {
     pub id: String,
     pub email: String,
     pub name: String,
+    pub role: Role,
 }
 
 #[derive(TS, Deserialize, Clone, ToSchema)]

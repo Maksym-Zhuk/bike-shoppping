@@ -1,6 +1,7 @@
 use crate::{
     dto::auth::{AuthResponse, LoginDto, RefreshTokenRequest},
     errors::{AppErrors, auth_error::AuthError, hash_error::HashError, jwt_error::JWTError},
+    models::role::Role,
     utils::{hash, jwt},
 };
 use actix_web::web;
@@ -29,13 +30,14 @@ pub async fn register(
         email: data.email.clone(),
         name: data.name.clone(),
         password: password_hash,
+        role: Role::Admin,
     };
 
     let collection = db.collection::<User>("users");
 
     collection.insert_one(&user).await?;
 
-    let tokens = match jwt::generate_token_pair(user._id.to_string()) {
+    let tokens = match jwt::generate_token_pair(user._id.to_string(), user.role) {
         Ok(t) => t,
         Err(err) => {
             eprintln!("❌ Token generation error: {:#}", err);
@@ -50,6 +52,7 @@ pub async fn register(
             id: user._id.to_string(),
             email: user.email,
             name: user.name,
+            role: user.role,
         },
     })
 }
@@ -74,7 +77,7 @@ pub async fn login(db: &Database, data: web::Json<LoginDto>) -> Result<AuthRespo
                 return Err(AppErrors::Auth(AuthError::InvalidEmailORPassword));
             }
 
-            let tokens = match jwt::generate_token_pair(user._id.to_string()) {
+            let tokens = match jwt::generate_token_pair(user._id.to_string(), user.role) {
                 Ok(t) => t,
                 Err(err) => {
                     eprintln!("❌ Token generation error: {:#}", err);
@@ -89,6 +92,7 @@ pub async fn login(db: &Database, data: web::Json<LoginDto>) -> Result<AuthRespo
                     id: user._id.to_string(),
                     email: user.email,
                     name: user.name,
+                    role: user.role,
                 },
             })
         }
@@ -107,7 +111,7 @@ pub async fn refresh_token(data: web::Json<RefreshTokenRequest>) -> Result<Strin
         }
     };
 
-    let access_token = jwt::generate_access_token(claims.sub)?;
+    let access_token = jwt::generate_access_token(claims.sub, claims.role)?;
 
     Ok(access_token)
 }

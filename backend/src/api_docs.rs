@@ -15,6 +15,7 @@ use crate::errors::ErrorResponse;
 use crate::models::order::Order;
 use crate::models::product::Product;
 use crate::models::res::MessageResponse;
+use crate::models::role::Role;
 use utoipa::OpenApi;
 use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
 
@@ -51,7 +52,8 @@ use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
             LoginDto, 
             RegisterDto, 
             AuthResponse, 
-            RefreshTokenRequest
+            RefreshTokenRequest,
+            Role
         )
     ),
     info(title = "Bike Shop API", version = "0.1.0"),
