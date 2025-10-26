@@ -3,7 +3,7 @@ use ts_rs::TS;
 use utoipa::ToSchema;
 use uuid::Uuid;
 
-#[derive(TS, Serialize, Deserialize, Clone, ToSchema)]
+#[derive(TS, Serialize, Deserialize, Clone, ToSchema, Debug)]
 #[ts(export, export_to = "../../db_types/Order.d.ts")]
 pub struct Order {
     #[ts(type = "string")]
@@ -13,4 +13,5 @@ pub struct Order {
     /// products id
     pub products_id: Vec<String>,
     pub total_price: u32,
+    pub customer_id: String,
 }

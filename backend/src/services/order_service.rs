@@ -26,6 +26,7 @@ pub async fn get_all_orders(db: &Database) -> Result<Vec<Order>, AppErrors> {
 pub async fn create_order(
     db: &Database,
     new_order_data: web::Json<CreateOrderDto>,
+    user_id: String,
 ) -> Result<String, AppErrors> {
     let orders_collection = db.collection::<Order>("orders");
     let products_collection = db.collection::<Product>("products");
@@ -59,6 +60,7 @@ pub async fn create_order(
         _id: Uuid::new_v4(),
         products_id: new_order_data.products_id.clone(),
         total_price: new_order_data.total_price,
+        customer_id: user_id,
     };
 
     orders_collection.insert_one(order).await?;

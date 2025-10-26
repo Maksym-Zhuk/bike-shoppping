@@ -1,4 +1,4 @@
-use actix_web::{HttpResponse, Result, web};
+use actix_web::{HttpMessage, HttpRequest, HttpResponse, Result, web};
 
 use crate::{
     AppState,
@@ -6,11 +6,12 @@ use crate::{
     errors::{AppErrors, ErrorResponse},
     models::order::Order,
     services::order_service,
+    utils::jwt::Claims,
 };
 
 #[utoipa::path(
     get,
-    path = "/order/orders",
+    path = "/order/admin/orders",
     responses(
         (status = 200, description = "List of all orders", body = [Order]),
         (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
@@ -73,11 +74,20 @@ pub async fn get_all_orders(db: web::Data<AppState>) -> Result<HttpResponse, App
 pub async fn create_order(
     db: web::Data<AppState>,
     new_order_data: web::Json<CreateOrderDto>,
+    req: HttpRequest,
 ) -> Result<HttpResponse, AppErrors> {
-    let answer = order_service::create_order(&db.mongo, new_order_data).await?;
-    Ok(HttpResponse::Created().json(serde_json::json!({
-        "message": answer
-    })))
+    if let Some(claims) = req.extensions().get::<Claims>() {
+        let answer =
+            order_service::create_order(&db.mongo, new_order_data, claims.sub.clone()).await?;
+        Ok(HttpResponse::Created().json(serde_json::json!({
+            "message": answer
+        })))
+    } else {
+        Ok(HttpResponse::Unauthorized().json(serde_json::json!({
+            "error": "unauthorized",
+            "message": "No claims found"
+        })))
+    }
 }
 
 #[utoipa::path(
@@ -120,7 +130,7 @@ pub async fn get_order(
 
 #[utoipa::path(
     put,
-    path = "/order/update",
+    path = "/order/admin/update",
     request_body = UpdateOrderDto,
     responses(
         (status = 200, description = "Order updated successfully", body = inline(Object), example = json!({
@@ -166,7 +176,7 @@ pub async fn update_order(
 
 #[utoipa::path(
     delete,
-    path = "/order/delete/{id}",
+    path = "/order/admin/delete/{id}",
     params(
         ("id" = String, Path, description = "Order ID (UUID format)")
     ),

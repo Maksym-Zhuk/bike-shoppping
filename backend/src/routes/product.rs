@@ -9,7 +9,7 @@ pub fn init() -> Scope {
     web::scope("/product")
         .service(
             web::scope("")
-                .wrap(JwtMiddleware)
+                // .wrap(JwtMiddleware)
                 .route(
                     "/most_advantageous",
                     web::get().to(product_controller::get_most_advantageous),
@@ -21,7 +21,7 @@ pub fn init() -> Scope {
                 .route("/{id}", web::get().to(product_controller::get_product)),
         )
         .service(
-            web::scope("")
+            web::scope("/admin")
                 .wrap(JwtMiddleware)
                 .wrap(PermissionCheck::new(Role::Admin))
                 .route(

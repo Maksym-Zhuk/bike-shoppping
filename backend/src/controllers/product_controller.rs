@@ -28,7 +28,7 @@ pub async fn get_all_products(state: web::Data<AppState>) -> Result<HttpResponse
 
 #[utoipa::path(
     post,
-    path = "/product/create",
+    path = "/product/admin/create",
     request_body = CreateProductDto,
     responses(
         (status = 201, description = "Product created successfully", body = inline(Object), example = json!({
@@ -111,7 +111,7 @@ pub async fn get_product(
 
 #[utoipa::path(
     put,
-    path = "/product/update",
+    path = "/product/admin/update",
     request_body = UpdateProductDto,
     responses(
         (status = 200, description = "Product updated successfully", body = inline(Object), example = json!({
@@ -159,7 +159,7 @@ pub async fn update_product(
 
 #[utoipa::path(
     delete,
-    path = "/product/delete/{id}",
+    path = "/product/admin/delete/{id}",
     params(
         ("id" = String, Path, description = "Product ID (UUID format)")
     ),
