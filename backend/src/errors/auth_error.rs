@@ -7,4 +7,7 @@ pub enum AuthError {
 
     #[error("Invalid email or password")]
     InvalidEmailORPassword,
+
+    #[error("No claims found")]
+    Unauthorized,
 }

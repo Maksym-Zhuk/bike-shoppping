@@ -90,6 +90,12 @@ impl ResponseError for AppErrors {
                     "Invalid email or password".to_string(),
                     None,
                 ),
+                auth_error::AuthError::Unauthorized => (
+                    StatusCode::UNAUTHORIZED,
+                    "unauthorized",
+                    "No claims found".to_string(),
+                    None
+                )
             },
 
             AppErrors::Hash(_e) => {

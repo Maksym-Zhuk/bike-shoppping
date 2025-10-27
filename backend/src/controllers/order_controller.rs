@@ -3,7 +3,7 @@ use actix_web::{HttpMessage, HttpRequest, HttpResponse, Result, web};
 use crate::{
     AppState,
     dto::order::{CreateOrderDto, UpdateOrderDto},
-    errors::{AppErrors, ErrorResponse},
+    errors::{AppErrors, ErrorResponse, auth_error::AuthError},
     models::order::Order,
     services::order_service,
     utils::jwt::Claims,
@@ -83,10 +83,7 @@ pub async fn create_order(
             "message": answer
         })))
     } else {
-        Ok(HttpResponse::Unauthorized().json(serde_json::json!({
-            "error": "unauthorized",
-            "message": "No claims found"
-        })))
+        Err(AppErrors::Auth(AuthError::Unauthorized))
     }
 }
 

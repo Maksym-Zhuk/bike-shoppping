@@ -7,10 +7,11 @@ use crate::controllers::product_controller::{
     __path_create_product, __path_delete_product, __path_get_all_products,
     __path_get_most_advantageous, __path_get_product, __path_update_product,
 };
-use crate::controllers::user_controller::__path_me;
+use crate::controllers::user_controller::{__path_me, __path_update_user, __path_delete_user};
 use crate::dto::auth::{AuthResponse, LoginDto, RefreshTokenRequest, RegisterDto, UserInfo};
 use crate::dto::order::{CreateOrderDto, UpdateOrderDto};
 use crate::dto::product::{CreateProductDto, UpdateProductDto};
+use crate::dto::user::UpdateUserDto;
 use crate::errors::ErrorResponse;
 use crate::models::order::Order;
 use crate::models::product::Product;
@@ -36,7 +37,9 @@ use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
         register, 
         login, 
         refresh_token, 
-        me
+        me,
+        update_user,
+        delete_user
     ),
     components(
         schemas(
@@ -53,7 +56,8 @@ use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
             RegisterDto, 
             AuthResponse, 
             RefreshTokenRequest,
-            Role
+            Role,
+            UpdateUserDto
         )
     ),
     info(title = "Bike Shop API", version = "0.1.0"),
