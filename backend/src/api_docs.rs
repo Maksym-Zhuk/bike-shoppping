@@ -7,7 +7,7 @@ use crate::controllers::product_controller::{
     __path_create_product, __path_delete_product, __path_get_all_products,
     __path_get_most_advantageous, __path_get_product, __path_update_product,
 };
-use crate::controllers::user_controller::{__path_me, __path_update_user, __path_delete_user};
+use crate::controllers::user_controller::{__path_me, __path_update_user, __path_delete_user, __path_get_all_users};
 use crate::dto::auth::{AuthResponse, LoginDto, RefreshTokenRequest, RegisterDto, UserInfo};
 use crate::dto::order::{CreateOrderDto, UpdateOrderDto};
 use crate::dto::product::{CreateProductDto, UpdateProductDto};
@@ -39,7 +39,8 @@ use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
         refresh_token, 
         me,
         update_user,
-        delete_user
+        delete_user,
+        get_all_users
     ),
     components(
         schemas(

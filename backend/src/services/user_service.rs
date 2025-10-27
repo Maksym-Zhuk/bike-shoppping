@@ -1,5 +1,6 @@
 use actix_web::web;
 use bson::{Uuid, doc, to_document};
+use futures_util::TryStreamExt;
 use mongodb::Database;
 
 use crate::{
@@ -60,4 +61,19 @@ pub async fn delete_user(db: &Database, user_id: String) -> Result<String, AppEr
     }
 
     Ok(String::from("User deleted successfully"))
+}
+
+pub async fn get_all_users(db: &Database) -> Result<Vec<UserInfo>, AppErrors> {
+    let collection = db.collection::<User>("users");
+
+    let mut cursor = collection.find(doc! {}).await?;
+    let mut users = Vec::new();
+
+    while let Some(result) = cursor.try_next().await? {
+        users.push(result);
+    }
+
+    let response: Vec<UserInfo> = users.into_iter().map(Into::into).collect();
+
+    Ok(response)
 }

@@ -8,6 +8,7 @@ use actix_cors::Cors;
 use actix_governor::{Governor, GovernorConfigBuilder};
 use actix_web::{
     App, HttpServer,
+    middleware::Logger,
     web::{self},
 };
 use log::info;
@@ -61,6 +62,7 @@ async fn main() {
             .configure(routes::init);
         App::new()
             .app_data(state.clone())
+            .wrap(Logger::default())
             .service(configure)
             .service(
                 utoipa_swagger_ui::SwaggerUi::new("/docs/{_:.*}")

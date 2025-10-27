@@ -30,7 +30,7 @@ pub async fn register(
         email: data.email.clone(),
         name: data.name.clone(),
         password: password_hash,
-        role: Role::Admin,
+        role: Role::User,
     };
 
     let collection = db.collection::<User>("users");

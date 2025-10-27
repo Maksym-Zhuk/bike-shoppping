@@ -2,7 +2,7 @@ use actix_web::{HttpResponse, Result, web};
 use validator::Validate;
 
 use crate::{
-    dto::auth::{LoginDto, RefreshTokenRequest, RegisterDto, UserInfo}, errors::AppErrors, models::res::MessageResponse, services::auth_service, AppState
+    dto::auth::{LoginDto, RefreshTokenRequest, RegisterDto, UserInfo}, errors::{AppErrors, ErrorResponse}, models::res::MessageResponse, services::auth_service, AppState
 };
 
 #[utoipa::path(
@@ -18,11 +18,11 @@ use crate::{
                 ("X-Access-Token" = String, description = "JWT access token for authentication"),
                 ("X-Refresh-Token" = String, description = "JWT refresh token for obtaining new access token")
             )),
-        (status = 400, description = "Validation failed", body = inline(Object), example = json!({
+        (status = 400, description = "Validation failed", body = ErrorResponse, example = json!({
             "error": "validation_error",
             "message": "Validation failed"
         })),
-        (status = 500, description = "Internal server error", body = inline(Object), example = json!({
+        (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
             "message": "Database error"
         }))
@@ -61,15 +61,15 @@ pub async fn register(
                 ("X-Refresh-Token" = String, description = "JWT refresh token for obtaining new access token")
             )
         ),
-        (status = 400, description = "Validation failed", body = inline(Object), example = json!({
+        (status = 400, description = "Validation failed", body = ErrorResponse, example = json!({
             "error": "validation_error",
             "message": "Validation failed"
         })),
-        (status = 401, description = "Invalid credentials", body = inline(Object), example = json!({
+        (status = 401, description = "Invalid credentials", body = ErrorResponse, example = json!({
             "error": "invalid_credentials",
             "message": "Invalid email or password"
         })),
-        (status = 500, description = "Internal server error", body = inline(Object), example = json!({
+        (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
             "message": "Database error"
         }))
@@ -106,11 +106,11 @@ pub async fn login(
             headers(
                 ("X-Access-Token" = String, description = "JWT access token for authentication"),
             )),
-        (status = 401, description = "Invalid refresh token", body = inline(Object), example = json!({
+        (status = 401, description = "Invalid refresh token", body = ErrorResponse, example = json!({
             "error": "invalid_refresh_token",
             "message": "Invalid refresh token"
         })),
-        (status = 500, description = "Internal server error", body = inline(Object), example = json!({
+        (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "jwt_error",
             "message": "Authorization error"
         }))

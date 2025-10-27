@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 // use utoipa::ToSchema;
 use uuid::Uuid;
 
-use crate::models::role::Role;
+use crate::{dto::auth::UserInfo, models::role::Role};
 
 #[derive(/*TS,*/ Serialize, Deserialize, Clone /*ToSchema*/)]
 // #[ts(export, export_to = "../../db_types/User.d.ts")]
@@ -16,4 +16,15 @@ pub struct User {
     pub email: String,
     pub password: String,
     pub role: Role,
+}
+
+impl From<User> for UserInfo {
+    fn from(user: User) -> Self {
+        UserInfo {
+            id: user._id.to_string(),
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        }
+    }
 }

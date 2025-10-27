@@ -14,7 +14,7 @@ use crate::{
     path = "/product/products",
     responses(
         (status = 200, description = "List of all products", body = [Product]),
-        (status = 500, description = "Internal server error", body = inline(Object), example = json!({
+        (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
             "message": "Database error"
         }))
@@ -31,14 +31,14 @@ pub async fn get_all_products(state: web::Data<AppState>) -> Result<HttpResponse
     path = "/product/admin/create",
     request_body = CreateProductDto,
     responses(
-        (status = 201, description = "Product created successfully", body = inline(Object), example = json!({
+        (status = 201, description = "Product created successfully", body = ErrorResponse, example = json!({
             "message": "Product created successfully"
         })),
-        (status = 400, description = "Validation failed", body = inline(Object), example = json!({
+        (status = 400, description = "Validation failed", body = ErrorResponse, example = json!({
             "error": "validation_error",
             "message": "Validation failed"
         })),
-        (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
+        (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
             "error": "jwt_error",
             "message": "Authorization error"
         })),
@@ -48,7 +48,7 @@ pub async fn get_all_products(state: web::Data<AppState>) -> Result<HttpResponse
                 "message": "Necessary role: Admin"
             })
         ),
-        (status = 500, description = "Internal server error", body = inline(Object), example = json!({
+        (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
             "message": "Database error"
         }))
@@ -85,16 +85,16 @@ pub async fn create_product(
     ),
     responses(
         (status = 200, description = "Product found", body = Product),
-        (status = 400, description = "Invalid UUID format", body = inline(Object), example = json!({
+        (status = 400, description = "Invalid UUID format", body = ErrorResponse, example = json!({
             "error": "invalid_uuid",
             "message": "Invalid UUID format",
             "details": "The UUID must be in the following format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
         })),
-        (status = 404, description = "Product not found", body = inline(Object), example = json!({
+        (status = 404, description = "Product not found", body = ErrorResponse, example = json!({
             "error": "not_found",
             "message": "Product not found"
         })),
-        (status = 500, description = "Internal server error", body = inline(Object), example = json!({
+        (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
             "message": "Database error"
         }))
@@ -114,14 +114,14 @@ pub async fn get_product(
     path = "/product/admin/update",
     request_body = UpdateProductDto,
     responses(
-        (status = 200, description = "Product updated successfully", body = inline(Object), example = json!({
+        (status = 200, description = "Product updated successfully", body = ErrorResponse, example = json!({
             "message": "Product updated successfully"
         })),
-        (status = 400, description = "Invalid UUID format", body = inline(Object), example = json!({
+        (status = 400, description = "Invalid UUID format", body = ErrorResponse, example = json!({
             "error": "invalid_uuid",
             "message": "Invalid UUID format"
         })),
-        (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
+        (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
             "error": "jwt_error",
             "message": "Authorization error"
         })),
@@ -131,11 +131,11 @@ pub async fn get_product(
                 "message": "Necessary role: Admin"
             })
         ),
-        (status = 404, description = "Product not found", body = inline(Object), example = json!({
+        (status = 404, description = "Product not found", body = ErrorResponse, example = json!({
             "error": "not_found",
             "message": "Product not found"
         })),
-        (status = 500, description = "Internal server error", body = inline(Object), example = json!({
+        (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
             "message": "Database error"
         }))
@@ -164,14 +164,14 @@ pub async fn update_product(
         ("id" = String, Path, description = "Product ID (UUID format)")
     ),
     responses(
-        (status = 200, description = "Product deleted successfully", body = inline(Object), example = json!({
+        (status = 200, description = "Product deleted successfully", body = ErrorResponse, example = json!({
             "message": "Product deleted successfully"
         })),
-        (status = 400, description = "Invalid UUID format", body = inline(Object), example = json!({
+        (status = 400, description = "Invalid UUID format", body = ErrorResponse, example = json!({
             "error": "invalid_uuid",
             "message": "Invalid UUID format"
         })),
-        (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
+        (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
             "error": "jwt_error",
             "message": "Authorization error"
         })),
@@ -181,11 +181,11 @@ pub async fn update_product(
                 "message": "Necessary role: Admin"
             })
         ),
-        (status = 404, description = "Product not found", body = inline(Object), example = json!({
+        (status = 404, description = "Product not found", body = ErrorResponse, example = json!({
             "error": "not_found",
             "message": "Product not found"
         })),
-        (status = 500, description = "Internal server error", body = inline(Object), example = json!({
+        (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
             "message": "Database error"
         }))
@@ -211,11 +211,11 @@ pub async fn delete_product(
     path = "/product/most_advantageous",
     responses(
         (status = 200, description = "Most advantageous product", body = Product),
-        (status = 404, description = "No products found", body = inline(Object), example = json!({
+        (status = 404, description = "No products found", body = ErrorResponse, example = json!({
             "error": "not_found",
             "message": "Product not found"
         })),
-        (status = 500, description = "Internal server error", body = inline(Object), example = json!({
+        (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
             "message": "Database error"
         }))

@@ -14,7 +14,7 @@ use crate::{
     path = "/order/admin/orders",
     responses(
         (status = 200, description = "List of all orders", body = [Order]),
-        (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
+        (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
             "error": "jwt_error",
             "message": "Authorization error"
         })),
@@ -24,7 +24,7 @@ use crate::{
                 "message": "Necessary role: Admin"
             })
         ),
-        (status = 500, description = "Internal server error", body = inline(Object), example = json!({
+        (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
             "message": "Database error"
         }))
@@ -44,10 +44,10 @@ pub async fn get_all_orders(db: web::Data<AppState>) -> Result<HttpResponse, App
     path = "/order/create",
     request_body = CreateOrderDto,
     responses(
-        (status = 201, description = "Order created successfully", body = inline(Object), example = json!({
+        (status = 201, description = "Order created successfully", body = ErrorResponse, example = json!({
             "message": "Order created successfully"
         })),
-        (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
+        (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
             "error": "jwt_error",
             "message": "Authorization error"
         })),
@@ -57,11 +57,11 @@ pub async fn get_all_orders(db: web::Data<AppState>) -> Result<HttpResponse, App
                 "message": "Necessary role: Admin"
             })
         ),
-        (status = 404, description = "Some products not found", body = inline(Object), example = json!({
+        (status = 404, description = "Some products not found", body = ErrorResponse, example = json!({
             "error": "not_found",
             "message": "Some product not found"
         })),
-        (status = 500, description = "Internal server error", body = inline(Object), example = json!({
+        (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
             "message": "Database error"
         }))
@@ -95,19 +95,19 @@ pub async fn create_order(
     ),
     responses(
         (status = 200, description = "Order found", body = Order),
-        (status = 400, description = "Invalid UUID format", body = inline(Object), example = json!({
+        (status = 400, description = "Invalid UUID format", body = ErrorResponse, example = json!({
             "error": "invalid_uuid",
             "message": "Invalid UUID format"
         })),
-        (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
+        (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
             "error": "jwt_error",
             "message": "Authorization error"
         })),
-        (status = 404, description = "Order not found", body = inline(Object), example = json!({
+        (status = 404, description = "Order not found", body = ErrorResponse, example = json!({
             "error": "not_found",
             "message": "Order not found"
         })),
-        (status = 500, description = "Internal server error", body = inline(Object), example = json!({
+        (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
             "message": "Database error"
         }))
@@ -130,14 +130,14 @@ pub async fn get_order(
     path = "/order/admin/update",
     request_body = UpdateOrderDto,
     responses(
-        (status = 200, description = "Order updated successfully", body = inline(Object), example = json!({
+        (status = 200, description = "Order updated successfully", body = ErrorResponse, example = json!({
             "message": "Order updated successfully"
         })),
-        (status = 400, description = "Invalid UUID format", body = inline(Object), example = json!({
+        (status = 400, description = "Invalid UUID format", body = ErrorResponse, example = json!({
             "error": "invalid_uuid",
             "message": "Invalid UUID format"
         })),
-        (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
+        (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
             "error": "jwt_error",
             "message": "Authorization error"
         })),
@@ -147,11 +147,11 @@ pub async fn get_order(
                 "message": "Necessary role: Admin"
             })
         ),
-        (status = 404, description = "Order not found", body = inline(Object), example = json!({
+        (status = 404, description = "Order not found", body = ErrorResponse, example = json!({
             "error": "not_found",
             "message": "Order not found"
         })),
-        (status = 500, description = "Internal server error", body = inline(Object), example = json!({
+        (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
             "message": "Database error"
         }))
@@ -178,14 +178,14 @@ pub async fn update_order(
         ("id" = String, Path, description = "Order ID (UUID format)")
     ),
     responses(
-        (status = 200, description = "Order deleted successfully", body = inline(Object), example = json!({
+        (status = 200, description = "Order deleted successfully", body = ErrorResponse, example = json!({
             "message": "Order deleted successfully"
         })),
-        (status = 400, description = "Invalid UUID format", body = inline(Object), example = json!({
+        (status = 400, description = "Invalid UUID format", body = ErrorResponse, example = json!({
             "error": "invalid_uuid",
             "message": "Invalid UUID format"
         })),
-        (status = 401, description = "Unauthorized", body = inline(Object), example = json!({
+        (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
             "error": "jwt_error",
             "message": "Authorization error"
         })),
@@ -195,11 +195,11 @@ pub async fn update_order(
                 "message": "Necessary role: Admin"
             })
         ),
-        (status = 404, description = "Order not found", body = inline(Object), example = json!({
+        (status = 404, description = "Order not found", body = ErrorResponse, example = json!({
             "error": "not_found",
             "message": "Order not found"
         })),
-        (status = 500, description = "Internal server error", body = inline(Object), example = json!({
+        (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
             "message": "Database error"
         }))
