@@ -1,25 +1,22 @@
 import { View, Text } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import Product from "./Product";
+import { useState, useEffect } from "react";
+import axios from "axios";
 export default function Products() {
-    const placeholderProduct = [
-        {
-            name: 'Peugeot - LR01 ',
-            category: 1,
-            images: ["../../../assets/images/banner-bike-sample.png"],
-            price: 1.999
-        },
-        {
-            name: 'Peugeot - LR01 ',
-            category: 1,
-            images: ["../../../assets/images/banner-bike-sample.png"],
-            price: 1.999
-        },
-    ]
+    const [products, setProducts] = useState([]);
+    useEffect(() => {
+        axios.get('http://192.168.0.109:8080/api/product/products').then(res => setProducts(res.data));
+    }, [])
+
     return (
-        <View className="w-full flex-row justify-between items-center px-6">
-            {placeholderProduct.map((product, index) => (
-                <Product key={index} content={product} />
+        <View className="w-full flex-row flex-wrap gap-x-7 px-6 mt-2">
+            {products.map((product, index) => (
+                <Product
+                    key={index}
+                    content={product}
+                    index={index}
+                />
             ))}
         </View>
     );

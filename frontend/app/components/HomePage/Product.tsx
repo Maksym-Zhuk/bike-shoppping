@@ -1,17 +1,27 @@
 import React from "react";
-import { View } from "react-native";
-import Svg, { Path, Defs, LinearGradient, Stop, G } from "react-native-svg";
+import { View, Text, Image } from "react-native";
+import { Svg, Defs, LinearGradient, Stop, Path } from "react-native-svg";
 import { BlurView } from "expo-blur";
+import { G } from "react-native-svg";
 
 interface ProductProps {
-    content?: object;
+    content?: {
+        name: string;
+        price: number;
+        description: string;
+        images: string[];
+        discount: number;
+    },
+    index?: number;
 }
 
-export default function Product({ content }: ProductProps) {
+export default function Product({ content, index }: ProductProps) {
+    if (!content) return null;
+
     return (
-        <View className="items-center justify-center w-[180px]">
+        <View className={`items-center justify-center w-[180px] ${(index ?? 0) % 2 === 1 ? "-mt-16" : ""}`}>
             <Svg
-                width={290}
+                width={285}
                 height={210}
                 viewBox="0 9 90 45"
                 fill="none"
