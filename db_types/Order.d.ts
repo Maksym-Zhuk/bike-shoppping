@@ -4,4 +4,4 @@ export type Order = { _id: string,
 /**
  * products id
  */
-products_id: Array<string>, total_price: number, };
+products_id: Array<string>, total_price: number, customer_id: string, };
