@@ -19,12 +19,16 @@ export default function Product({ content, index }: ProductProps) {
     if (!content) return null;
 
     return (
-        <View className={`items-center justify-center w-[180px] ${(index ?? 0) % 2 === 1 ? "-mt-16" : ""}`}>
+        <View
+            className={`items-center justify-center w-[180px] ${(index ?? 0) % 2 === 1 ? "-mt-12" : ""}`}
+            style={{ height: 300 }}
+        >
             <Svg
                 width={285}
-                height={210}
+                height={300}
                 viewBox="0 9 90 45"
                 fill="none"
+                style={{ position: "absolute", bottom: 0 }}
             >
                 <Defs>
                     <LinearGradient
@@ -73,15 +77,23 @@ export default function Product({ content, index }: ProductProps) {
             <View
                 style={{
                     position: "absolute",
-                    top: -50,
+                    top: 0,
                     left: 0,
                     right: 0,
                     bottom: 0,
                     alignItems: "center",
                     justifyContent: "center",
+                    // backgroundColor: '#ffffff66'
                 }}
             >
-                {/* {content} */}
+                <Image
+                    source={{ uri: content.images[0] }}
+                    className="w-[90%] h-[170px] z-10"
+                    resizeMode="contain"
+                />
+                <Text className="absolute text-[rgba(255,255,255,0.7)] text-[32px] font-bold top-[175px] left-[25px]">
+                    {content.discount}% Off
+                </Text>
             </View>
         </View>
     );
