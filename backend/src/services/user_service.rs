@@ -6,7 +6,7 @@ use mongodb::Database;
 use crate::{
     dto::{auth::UserInfo, user::UpdateUserDto},
     errors::AppErrors,
-    models::user::User,
+    models::{order::Order, user::User},
 };
 
 pub async fn me(db: &Database, user_id: String) -> Result<UserInfo, AppErrors> {
@@ -76,4 +76,14 @@ pub async fn get_all_users(db: &Database) -> Result<Vec<UserInfo>, AppErrors> {
     let response: Vec<UserInfo> = users.into_iter().map(Into::into).collect();
 
     Ok(response)
+}
+
+pub async fn get_my_orders(db: &Database, user_id: String) -> Result<Vec<Order>, AppErrors> {
+    let collection = db.collection::<Order>("orders");
+
+    let cursor = collection.find(doc! { "customer_id": &user_id }).await?;
+
+    let orders: Vec<Order> = cursor.try_collect().await?;
+
+    Ok(orders)
 }

@@ -5,7 +5,7 @@ use crate::{
     AppState,
     dto::{auth::UserInfo, user::UpdateUserDto},
     errors::{AppErrors, ErrorResponse, auth_error::AuthError},
-    models::res::MessageResponse,
+    models::{order::Order, res::MessageResponse},
     services::user_service,
     utils::jwt::Claims,
 };
@@ -157,4 +157,39 @@ pub async fn delete_user(
 pub async fn get_all_users(db: web::Data<AppState>) -> Result<HttpResponse, AppErrors> {
     let res = user_service::get_all_users(&db.mongo).await?;
     Ok(HttpResponse::Ok().json(res))
+}
+
+#[utoipa::path(
+    get,
+    path = "/user/my_orders",
+    responses(
+        (status = 200, body = [Order]),
+        (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
+            "error": "unauthorized",
+            "message": "No claims found"
+        })),
+        (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
+            "error": "jwt_error",
+            "message": "Authorization error"
+        })),
+        (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
+            "error": "database_error",
+            "message": "Database error"
+        }))
+    ),
+    tag = "Users",
+    security(
+        ("bearer_auth" = [])
+    )
+)]
+pub async fn get_my_orders(
+    db: web::Data<AppState>,
+    req: HttpRequest,
+) -> Result<HttpResponse, AppErrors> {
+    if let Some(claims) = req.extensions().get::<Claims>() {
+        let res = user_service::get_my_orders(&db.mongo, claims.sub.clone()).await?;
+        Ok(HttpResponse::Ok().json(res))
+    } else {
+        Err(AppErrors::Auth(AuthError::Unauthorized))
+    }
 }
