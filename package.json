@@ -1,7 +1,7 @@
 {
   "scripts": {
     "run-backend": "cd backend && cargo run",
-    "gen-db-types": "cd backend && cargo test",
+    "gen-db-types": "cd backend && cargo test export_bindings",
     "run-frontend": "cd frontend && npx expo start",
     "run-frontend-global": "cd frontend && npx expo start --tunnel"
   }
