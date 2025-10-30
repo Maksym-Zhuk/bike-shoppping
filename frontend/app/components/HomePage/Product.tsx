@@ -18,8 +18,7 @@ export default function Product({ content, index }: ProductProps) {
 
     return (
         <View
-            className={`items-center justify-center w-[180px] ${(index ?? 0) % 2 === 1 ? "-mt-12" : ""
-                }`}
+            className={`items-center justify-center w-[180px] ${(index ?? 0) % 2 === 1 ? "-mt-10" : ""} ${((index ?? 0) > 1) ? "-mt-10" : ""}`}
             style={{ height: 300 }}
         >
             {/* === Background Shape === */}

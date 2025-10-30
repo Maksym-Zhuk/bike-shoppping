@@ -10,7 +10,7 @@ export default function Products() {
     }, [])
 
     return (
-        <View className="w-full flex-row flex-wrap gap-x-7 px-6 -mt-3">
+        <View className="w-full flex-row flex-wrap gap-x-7 px-6 -mt-6">
             {products.map((product, index) => (
                 <Product
                     key={index}
