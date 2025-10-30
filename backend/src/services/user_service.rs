@@ -1,5 +1,5 @@
 use actix_web::web;
-use bson::{Uuid, doc, to_document};
+use bson::{doc, to_document, Uuid};
 use futures_util::TryStreamExt;
 use mongodb::Database;
 

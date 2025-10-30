@@ -1,4 +1,8 @@
-use mongodb::{Client, Database, bson::doc, options::ClientOptions};
+use mongodb::{
+    bson::doc,
+    options::{ClientOptions, IndexOptions},
+    Client, Database, IndexModel,
+};
 use std::env;
 
 pub async fn init_db() -> Database {
@@ -20,5 +24,19 @@ pub async fn init_db() -> Database {
 
     println!("✅ Connecting to MongoDB is successful!");
 
-    client.database("bike_shop")
+    let db = client.database("bike_shop");
+
+    ensure_indexes(&db).await;
+
+    db
+}
+
+pub async fn ensure_indexes(db: &Database) {
+    let users = db.collection::<mongodb::bson::Document>("users");
+    let index_options = IndexOptions::builder().unique(true).build();
+    let model = IndexModel::builder()
+        .keys(doc! { "email": 1 })
+        .options(index_options)
+        .build();
+    users.create_index(model).await.unwrap();
 }

@@ -2,7 +2,7 @@ pub mod auth_error;
 pub mod hash_error;
 pub mod jwt_error;
 
-use actix_web::{HttpResponse, ResponseError, http::StatusCode};
+use actix_web::{http::StatusCode, HttpResponse, ResponseError};
 use serde::Serialize;
 use thiserror::Error;
 use ts_rs::TS;
@@ -109,14 +109,25 @@ impl ResponseError for AppErrors {
             }
 
             AppErrors::Mongo(e) => {
+                use mongodb::error::{ErrorKind, WriteFailure};
+
                 eprintln!("MongoDB error: {:?}", e);
-                (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    "database_error",
-                    "Database error".to_string(),
-                    None,
-                )
-            }
+
+                match &*e.kind {
+                    ErrorKind::Write(WriteFailure::WriteError(write_err)) if write_err.code == 11000 => (
+                        StatusCode::CONFLICT,
+                        "duplicate_key",
+                        "Email already exists".to_string(),
+                        None,
+                    ),
+                    _ => (
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        "database_error",
+                        "Database error".to_string(),
+                        Some(e.to_string()),
+                    ),
+                }
+            },
 
             AppErrors::Bson(e) => {
                 eprintln!("BSON error: {:?}", e);

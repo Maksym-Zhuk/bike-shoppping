@@ -1,13 +1,13 @@
-use actix_web::{HttpMessage, HttpRequest, HttpResponse, Result, web};
+use actix_web::{web, HttpMessage, HttpRequest, HttpResponse, Result};
 use validator::Validate;
 
 use crate::{
-    AppState,
     dto::{auth::UserInfo, user::UpdateUserDto},
-    errors::{AppErrors, ErrorResponse, auth_error::AuthError},
+    errors::{auth_error::AuthError, AppErrors, ErrorResponse},
     models::{order::Order, res::MessageResponse},
     services::user_service,
     utils::jwt::Claims,
+    AppState,
 };
 
 #[utoipa::path(

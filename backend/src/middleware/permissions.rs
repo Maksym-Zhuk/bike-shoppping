@@ -1,12 +1,12 @@
 use actix_web::{
-    Error, HttpMessage, HttpResponse,
     body::EitherBody,
-    dev::{Service, ServiceRequest, ServiceResponse, Transform, forward_ready},
+    dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform},
+    Error, HttpMessage, HttpResponse,
 };
 use futures_util::future::LocalBoxFuture;
 
 use crate::models::role::Role;
-use std::future::{Ready, ready};
+use std::future::{ready, Ready};
 
 pub struct PermissionCheck {
     required_role: Role,

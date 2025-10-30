@@ -7,7 +7,9 @@ use crate::controllers::product_controller::{
     __path_create_product, __path_delete_product, __path_get_all_products,
     __path_get_most_advantageous, __path_get_product, __path_update_product,
 };
-use crate::controllers::user_controller::{__path_me, __path_update_user, __path_delete_user, __path_get_all_users, __path_get_my_orders};
+use crate::controllers::user_controller::{
+    __path_delete_user, __path_get_all_users, __path_get_my_orders, __path_me, __path_update_user,
+};
 use crate::dto::auth::{AuthResponse, LoginDto, RefreshTokenRequest, RegisterDto, UserInfo};
 use crate::dto::order::{CreateOrderDto, UpdateOrderDto};
 use crate::dto::product::{CreateProductDto, UpdateProductDto};
@@ -17,8 +19,8 @@ use crate::models::order::Order;
 use crate::models::product::Product;
 use crate::models::res::MessageResponse;
 use crate::models::role::Role;
-use utoipa::OpenApi;
 use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
+use utoipa::OpenApi;
 
 #[derive(OpenApi)]
 #[openapi(

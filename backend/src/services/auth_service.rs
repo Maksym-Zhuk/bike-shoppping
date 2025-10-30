@@ -1,6 +1,6 @@
 use crate::{
     dto::auth::{AuthResponse, LoginDto, RefreshTokenRequest},
-    errors::{AppErrors, auth_error::AuthError, hash_error::HashError, jwt_error::JWTError},
+    errors::{auth_error::AuthError, hash_error::HashError, jwt_error::JWTError, AppErrors},
     models::role::Role,
     utils::{hash, jwt},
 };

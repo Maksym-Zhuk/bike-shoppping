@@ -22,6 +22,10 @@ use crate::{
             "error": "validation_error",
             "message": "Validation failed"
         })),
+        (status = 409, body = ErrorResponse, example = json!({
+            "error": "duplicate_key",
+            "message": "Email already exists"
+        })),
         (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
             "message": "Database error"

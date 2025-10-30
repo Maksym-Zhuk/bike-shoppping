@@ -7,9 +7,9 @@ use crate::{
 use actix_cors::Cors;
 use actix_governor::{Governor, GovernorConfigBuilder};
 use actix_web::{
-    App, HttpServer,
     middleware::Logger,
     web::{self},
+    App, HttpServer,
 };
 use log::info;
 use redis::aio::ConnectionManager;
@@ -51,7 +51,7 @@ async fn main() {
 
     HttpServer::new(move || {
         let cors = Cors::default()
-            .allowed_origin("http://localhost:8081")
+            .allow_any_origin()
             .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
             .allowed_headers(vec!["Content-Type", "Authorization"])
             .max_age(3600);

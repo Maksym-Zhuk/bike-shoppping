@@ -2,8 +2,8 @@ use actix_web::web;
 use bson::to_document;
 use futures_util::stream::TryStreamExt;
 use mongodb::bson::doc;
-use mongodb::{Database, options::FindOneOptions};
-use redis::{AsyncCommands, aio::ConnectionManager};
+use mongodb::{options::FindOneOptions, Database};
+use redis::{aio::ConnectionManager, AsyncCommands};
 use uuid::Uuid;
 
 use crate::dto::product::{CreateProductDto, UpdateProductDto};

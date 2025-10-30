@@ -1,8 +1,8 @@
 use actix_web::web;
-use bson::{Binary, Bson, to_document};
+use bson::{to_document, Binary, Bson};
 use futures_util::stream::TryStreamExt;
-use mongodb::Database;
 use mongodb::bson::doc;
+use mongodb::Database;
 use uuid::Uuid;
 
 use crate::{

@@ -3,7 +3,7 @@ use crate::{
     middleware::{auth::JwtMiddleware, permissions::PermissionCheck},
     models::role::Role,
 };
-use actix_web::{Scope, web};
+use actix_web::{web, Scope};
 
 pub fn init() -> Scope {
     web::scope("/product")

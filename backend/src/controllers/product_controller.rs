@@ -1,12 +1,12 @@
-use actix_web::{HttpResponse, Result, web};
+use actix_web::{web, HttpResponse, Result};
 use validator::Validate;
 
 use crate::{
-    AppState,
     dto::product::{CreateProductDto, UpdateProductDto},
     errors::{AppErrors, ErrorResponse},
     models::product::Product,
     services::product_service,
+    AppState,
 };
 
 #[utoipa::path(
