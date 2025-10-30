@@ -1,8 +1,6 @@
 import React from "react";
 import { View, Text, Image } from "react-native";
-import { Svg, Defs, LinearGradient, Stop, Path } from "react-native-svg";
-import { BlurView } from "expo-blur";
-import { G } from "react-native-svg";
+import Svg, { Defs, LinearGradient, Stop, Path, G } from "react-native-svg";
 
 interface ProductProps {
     content?: {
@@ -11,7 +9,7 @@ interface ProductProps {
         description: string;
         images: string[];
         discount: number;
-    },
+    };
     index?: number;
 }
 
@@ -20,60 +18,63 @@ export default function Product({ content, index }: ProductProps) {
 
     return (
         <View
-            className={`items-center justify-center w-[180px] ${(index ?? 0) % 2 === 1 ? "-mt-12" : ""}`}
+            className={`items-center justify-center w-[180px] ${(index ?? 0) % 2 === 1 ? "-mt-12" : ""
+                }`}
             style={{ height: 300 }}
         >
+            {/* === Background Shape === */}
             <Svg
-                width={285}
-                height={300}
-                viewBox="0 9 90 45"
+                width={185}
+                height={260}
+                viewBox="0 0 165 234"
                 fill="none"
-                style={{ position: "absolute", bottom: 0 }}
+                style={{
+                    position: "absolute",
+                    bottom: 0,
+                }}
             >
                 <Defs>
                     <LinearGradient
                         id="paint0_linear"
-                        x1="146.212"
-                        y1="103.734"
-                        x2="164.149"
-                        y2="251.851"
+                        x1="46"
+                        y1="58.0679"
+                        x2="82.8287"
+                        y2="170.834"
                         gradientUnits="userSpaceOnUse"
                     >
-                        <Stop stopColor="#353F54" />
-                        <Stop offset="1" stopColor="#222834" />
+                        <Stop stopColor="#363E51" />
+                        <Stop offset="1" stopColor="#191E26" />
                     </LinearGradient>
 
                     <LinearGradient
                         id="paint1_linear"
-                        x1="59.2424"
-                        y1="48.9627"
-                        x2="191.249"
-                        y2="237.494"
+                        x1="17.5"
+                        y1="3.20894"
+                        x2="135.882"
+                        y2="61.3003"
                         gradientUnits="userSpaceOnUse"
                     >
                         <Stop stopColor="white" />
-                        <Stop offset="0.844522" stopOpacity="0" />
                         <Stop offset="1" stopOpacity="0" />
                     </LinearGradient>
                 </Defs>
 
-                <BlurView intensity={40} tint="dark" className="flex-1" />
-
                 <G>
                     <Path
-                        d="M17 20.198C17 15.4312 20.3646 11.3271 25.0388 10.3922L65.0388 2.39223C71.2268 1.15465 77 5.88758 77 12.198V39.802C77 44.5688 73.6354 48.6729 68.9612 49.6078L28.9612 57.6078C22.7732 58.8454 17 54.1124 17 47.802V20.198Z"
+                        d="M0 39.7015C0 29.8576 7.16305 21.4775 16.8869 19.9452L141.887 0.248262C154.024 -1.66429 165 7.71737 165 20.0045V190.915C165 200.58 158.088 208.863 148.578 210.592L23.5777 233.319C11.3009 235.551 0 226.12 0 213.642V39.7015Z"
                         fill="url(#paint0_linear)"
                         fillOpacity={0.6}
                     />
                     <Path
-                        d="M65.1367 2.88281C71.0152 1.70711 76.5 6.2033 76.5 12.1982V39.8018C76.5 44.3302 73.3037 48.229 68.8633 49.1172L28.8633 57.1172C22.9848 58.2929 17.5 53.7967 17.5 47.8018V20.1982C17.5 15.6698 20.6963 11.771 25.1367 10.8828L65.1367 2.88281Z"
+                        d="M142.043 1.23608C153.573 -0.580586 164 8.332 164 20.0046V190.915C164 200.097 157.433 207.966 148.398 209.608L23.3984 232.336C11.7358 234.456 1.00023 225.496 1 213.642V39.7019C1 30.3503 7.80531 22.389 17.043 20.9333L142.043 1.23608Z"
                         stroke="url(#paint1_linear)"
                         strokeOpacity={0.2}
-                        strokeWidth={0.8}
+                        strokeWidth={2}
                     />
                 </G>
             </Svg>
 
+            {/* === Foreground content === */}
             <View
                 style={{
                     position: "absolute",
@@ -83,7 +84,6 @@ export default function Product({ content, index }: ProductProps) {
                     bottom: 0,
                     alignItems: "center",
                     justifyContent: "center",
-                    // backgroundColor: '#ffffff66'
                 }}
             >
                 <Image

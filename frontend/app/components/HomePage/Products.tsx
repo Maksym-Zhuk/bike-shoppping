@@ -6,7 +6,7 @@ import axios from "axios";
 export default function Products() {
     const [products, setProducts] = useState([]);
     useEffect(() => {
-        axios.get('http://192.168.0.109:8080/api/product/products').then(res => setProducts(res.data));
+        axios.get('http://192.168.0.113:8080/api/product/products').then(res => setProducts(res.data));
     }, [])
 
     return (
