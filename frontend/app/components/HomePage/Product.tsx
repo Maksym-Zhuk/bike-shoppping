@@ -9,6 +9,7 @@ interface ProductProps {
         description: string;
         images: string[];
         discount: number;
+        category: string;
     };
     index?: number;
 }
@@ -21,7 +22,6 @@ export default function Product({ content, index }: ProductProps) {
             className={`items-center justify-center w-[180px] ${(index ?? 0) % 2 === 1 ? "-mt-10" : ""} ${((index ?? 0) > 1) ? "-mt-10" : ""}`}
             style={{ height: 300 }}
         >
-            {/* === Background Shape === */}
             <Svg
                 width={185}
                 height={260}
@@ -73,27 +73,19 @@ export default function Product({ content, index }: ProductProps) {
                 </G>
             </Svg>
 
-            {/* === Foreground content === */}
-            <View
-                style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}
-            >
+            <View className="absolute inset-0 items-center justify-start pt-12">
                 <Image
                     source={{ uri: content.images[0] }}
                     className="w-[90%] h-[170px] z-10"
                     resizeMode="contain"
                 />
-                <Text className="absolute text-[rgba(255,255,255,0.7)] text-[32px] font-bold top-[175px] left-[25px]">
-                    {content.discount}% Off
+                <Text className="absolute text-[rgba(255,255,255,0.7)] text-[20px] font-bold top-[177px] left-[15px]">
+                    {content.category}
+                </Text>
+                <Text className="absolute text-[rgba(255,255,255,0.7)] text-[20px] font-bold top-[207px] left-[15px]">
+                    {content.name}
                 </Text>
             </View>
-        </View>
+        </View >
     );
 }
