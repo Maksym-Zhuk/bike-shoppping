@@ -1,6 +1,7 @@
-import React from "react";
-import { View, Text, Image } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Image, Pressable } from "react-native";
 import Svg, { Defs, LinearGradient, Stop, Path, G } from "react-native-svg";
+import { Heart } from "lucide-react-native"; // 👈 import Lucide icon
 
 interface ProductProps {
     content?: {
@@ -15,13 +16,17 @@ interface ProductProps {
 }
 
 export default function Product({ content, index }: ProductProps) {
+    const [liked, setLiked] = useState(false);
+
     if (!content) return null;
 
     return (
         <View
-            className={`items-center justify-center w-[180px] ${(index ?? 0) % 2 === 1 ? "-mt-10" : ""} ${((index ?? 0) > 1) ? "-mt-10" : ""}`}
+            className={`items-center justify-center w-[180px] ${(index ?? 0) % 2 === 1 ? "-mt-10" : ""
+                } ${((index ?? 0) > 1) ? "-mt-10" : ""}`}
             style={{ height: 300 }}
         >
+            {/* Card background */}
             <Svg
                 width={185}
                 height={260}
@@ -73,14 +78,27 @@ export default function Product({ content, index }: ProductProps) {
                 </G>
             </Svg>
 
+            {/* Content */}
             <View className="absolute inset-0 items-center justify-start pt-12">
                 <Image
                     source={{ uri: content.images[0] }}
-                    className="w-[90%] h-[170px] z-10"
+                    className="w-[80%] h-[170px] z-10"
                     resizeMode="contain"
                 />
+
+                <Pressable
+                    onPress={() => setLiked(!liked)}
+                    className="absolute top-[53px] right-[13px]"
+                >
+                    <Heart
+                        size={22}
+                        color={liked ? "#34C8E8" : "rgba(255,255,255,0.7)"}
+                        fill={liked ? "#34C8E8" : "transparent"}
+                    />
+                </Pressable>
+
                 <Text className="absolute text-[rgba(255,255,255,0.6)] text-[18px] font-medium top-[185px] left-[15px]">
-                    {(content.category == "1") ? "Bikes" : "Accessories"}
+                    {content.category === "1" ? "Bikes" : "Accessories"}
                 </Text>
                 <Text className="absolute text-[rgba(255,255,255,0.7)] text-[18px] font-extrabold top-[207px] left-[15px] pr-2">
                     {content.name}
@@ -89,6 +107,6 @@ export default function Product({ content, index }: ProductProps) {
                     $ {content.price}
                 </Text>
             </View>
-        </View >
+        </View>
     );
 }
