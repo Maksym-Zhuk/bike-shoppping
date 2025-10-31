@@ -79,11 +79,14 @@ export default function Product({ content, index }: ProductProps) {
                     className="w-[90%] h-[170px] z-10"
                     resizeMode="contain"
                 />
-                <Text className="absolute text-[rgba(255,255,255,0.7)] text-[20px] font-bold top-[177px] left-[15px]">
-                    {content.category}
+                <Text className="absolute text-[rgba(255,255,255,0.6)] text-[18px] font-medium top-[185px] left-[15px]">
+                    {(content.category == "1") ? "Bikes" : "Accessories"}
                 </Text>
-                <Text className="absolute text-[rgba(255,255,255,0.7)] text-[20px] font-bold top-[207px] left-[15px]">
+                <Text className="absolute text-[rgba(255,255,255,0.7)] text-[18px] font-extrabold top-[207px] left-[15px] pr-2">
                     {content.name}
+                </Text>
+                <Text className="absolute text-[rgba(255,255,255,0.6)] text-[18px] font-medium top-[250px] left-[15px]">
+                    $ {content.price}
                 </Text>
             </View>
         </View >
