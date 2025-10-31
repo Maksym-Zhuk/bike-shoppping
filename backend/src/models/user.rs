@@ -5,7 +5,7 @@ use uuid::Uuid;
 
 use crate::{dto::auth::UserInfo, models::role::Role};
 
-#[derive(/*TS,*/ Serialize, Deserialize, Clone /*ToSchema*/)]
+#[derive(/*TS,*/ Serialize, Deserialize, Clone, Debug /*ToSchema*/)]
 // #[ts(export, export_to = "../../db_types/User.d.ts")]
 pub struct User {
     // #[ts(type = "string")]

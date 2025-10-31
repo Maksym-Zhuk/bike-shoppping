@@ -1,6 +1,11 @@
-use actix_web::{test, web, App};
+use actix_http::Request;
+use actix_web::{
+    dev::{Service, ServiceResponse},
+    test, web, App,
+};
 use mongodb::{Client, Database};
 use redis::aio::ConnectionManager;
+use serde_json::json;
 use uuid::Uuid;
 
 use bike_shopping_backend::{
@@ -84,6 +89,26 @@ pub async fn create_test_app(
 
 pub async fn generate_test_admin_token() -> Result<String, bike_shopping_backend::AppErrors> {
     generate_access_token(String::from(Uuid::new_v4()), Role::Admin)
+}
+
+pub async fn register_test_user(
+    app: &impl Service<Request, Response = ServiceResponse, Error = actix_web::Error>,
+    name: &str,
+    email: &str,
+    password: &str,
+) -> ServiceResponse {
+    let register_payload = json!({
+        "name": name,
+        "email": email,
+        "password": password,
+    });
+
+    let register_req = test::TestRequest::post()
+        .uri("/api/auth/register")
+        .set_json(&register_payload)
+        .to_request();
+
+    test::call_service(app, register_req).await
 }
 
 pub fn setup_test_env() {

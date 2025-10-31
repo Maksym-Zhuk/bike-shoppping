@@ -2,7 +2,7 @@ use actix_web::{HttpRequest, HttpResponse, Result, web};
 use validator::Validate;
 
 use crate::{
-    dto::auth::{LoginDto, RefreshTokenRequest, RegisterDto, UserInfo}, errors::{AppErrors, ErrorResponse, auth_error::AuthError}, models::{app::AppState, res::MessageResponse}, services::auth_service
+    dto::auth::{LoginDto, RegisterDto, UserInfo}, errors::{AppErrors, ErrorResponse, auth_error::AuthError}, models::{app::AppState, res::MessageResponse}, services::auth_service
 };
 
 #[utoipa::path(

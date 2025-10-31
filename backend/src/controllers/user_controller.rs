@@ -15,12 +15,8 @@ use crate::{
     responses(
         (status = 200, description = "User info retrieved successfully", body = UserInfo),
         (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
-            "error": "unauthorized",
-            "message": "No claims found"
-        })),
-        (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
-            "error": "jwt_error",
-            "message": "Authorization error"
+            "error": "invalid_token",
+            "message": "Invalid token: "
         })),
         (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
@@ -46,18 +42,18 @@ pub async fn me(db: web::Data<AppState>, req: HttpRequest) -> Result<HttpRespons
     path = "/user/update",
     request_body = UpdateUserDto,
     responses(
-        (status = 200, description = "User info retrieved successfully", body = MessageResponse),
+        (status = 200, description = "User updated successfully", body = MessageResponse),
         (status = 400, description = "Validation failed", body = ErrorResponse, example = json!({
             "error": "validation_error",
             "message": "Validation failed"
         })),
-        (status = 401, description = "Invalid credentials", body = ErrorResponse, example = json!({
+        (status = 400, description = "Invalid credentials", body = ErrorResponse, example = json!({
             "error": "invalid_credentials",
             "message": "Invalid email, password or name"
         })),
         (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
-            "error": "jwt_error",
-            "message": "Authorization error"
+            "error": "invalid_token",
+            "message": "Invalid token: "
         })),
         (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
@@ -93,14 +89,14 @@ pub async fn update_user(
     delete,
     path = "/user/delete",
     responses(
-        (status = 200, description = "User info retrieved successfully", body = MessageResponse),
+        (status = 200, description = "User deleted successfully", body = MessageResponse),
         (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
-            "error": "jwt_error",
-            "message": "Authorization error"
+            "error": "invalid_token",
+            "message": "Invalid token:"
         })),
-        (status = 404, description = "Product not found", body = ErrorResponse, example = json!({
+        (status = 404, description = "User not found", body = ErrorResponse, example = json!({
             "error": "not_found",
-            "message": "Product not found"
+            "message": "User not found"
         })),
         (status = 500, description = "Internal server error", body = ErrorResponse, example = json!({
             "error": "database_error",
@@ -130,12 +126,8 @@ pub async fn delete_user(
     responses(
         (status = 200, description = "Users info retrieved successfully", body = [UserInfo]),
         (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
-            "error": "unauthorized",
-            "message": "No claims found"
-        })),
-        (status = 401, description = "Unauthorized", body = ErrorResponse, example = json!({
-            "error": "jwt_error",
-            "message": "Authorization error"
+            "error": "invalid_token",
+            "message": "Invalid token:"
         })),
         (status = 403, description = "Not enough rights", body = ErrorResponse,
             example = json!({
