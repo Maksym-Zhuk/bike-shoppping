@@ -4,9 +4,8 @@ use validator::Validate;
 use crate::{
     dto::product::{CreateProductDto, UpdateProductDto},
     errors::{AppErrors, ErrorResponse},
-    models::product::Product,
+    models::{app::AppState, product::Product},
     services::product_service,
-    AppState,
 };
 
 #[utoipa::path(

@@ -102,8 +102,8 @@ pub async fn login(db: &Database, data: web::Json<LoginDto>) -> Result<AuthRespo
     }
 }
 
-pub async fn refresh_token(data: web::Json<RefreshTokenRequest>) -> Result<String, AppErrors> {
-    let claims = match jwt::validate_token(data.refresh_token.clone()) {
+pub async fn refresh_token(refresh_token: String) -> Result<String, AppErrors> {
+    let claims = match jwt::validate_token(refresh_token) {
         Ok(c) => c,
         Err(err) => {
             println!("❌ Invalid refresh token: {}", err);

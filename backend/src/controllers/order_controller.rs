@@ -3,10 +3,9 @@ use actix_web::{web, HttpMessage, HttpRequest, HttpResponse, Result};
 use crate::{
     dto::order::{CreateOrderDto, UpdateOrderDto},
     errors::{auth_error::AuthError, AppErrors, ErrorResponse},
-    models::order::Order,
+    models::{app::AppState, order::Order},
     services::order_service,
     utils::jwt::Claims,
-    AppState,
 };
 
 #[utoipa::path(

@@ -4,10 +4,9 @@ use validator::Validate;
 use crate::{
     dto::{auth::UserInfo, user::UpdateUserDto},
     errors::{auth_error::AuthError, AppErrors, ErrorResponse},
-    models::{order::Order, res::MessageResponse},
+    models::{app::AppState, order::Order, res::MessageResponse},
     services::user_service,
     utils::jwt::Claims,
-    AppState,
 };
 
 #[utoipa::path(

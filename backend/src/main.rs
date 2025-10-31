@@ -3,6 +3,7 @@ use std::{env, time::Duration};
 use crate::{
     api_docs::ApiDoc,
     db::{mongo::init_db, redis::init_redis},
+    models::app::AppState,
 };
 use actix_cors::Cors;
 use actix_governor::{Governor, GovernorConfigBuilder};
@@ -26,11 +27,6 @@ mod models;
 mod routes;
 mod services;
 mod utils;
-
-struct AppState {
-    mongo: mongodb::Database,
-    redis: ConnectionManager,
-}
 
 #[actix_web::main]
 async fn main() {
