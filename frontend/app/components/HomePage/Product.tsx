@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, Pressable } from "react-native";
+import { View, Text, Image, Pressable, TouchableOpacity } from "react-native";
 import Svg, { Defs, LinearGradient, Stop, Path, G } from "react-native-svg";
 import { Heart } from "lucide-react-native";
 
@@ -97,16 +97,24 @@ export default function Product({ content, index, shoppingCart, onSaveShoppingCa
                     resizeMode="contain"
                 />
 
-                <Pressable
+                <TouchableOpacity
                     onPress={handleLike}
-                    className="absolute top-[53px] right-[13px]"
+                    hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                    style={{
+                        position: "absolute",
+                        top: 53,
+                        right: 13,
+                        zIndex: 20,
+                        elevation: 20,
+                    }}
                 >
                     <Heart
                         size={22}
                         color={liked ? "#34C8E8" : "rgba(255,255,255,0.7)"}
                         fill={liked ? "#34C8E8" : "transparent"}
                     />
-                </Pressable>
+                </TouchableOpacity>
+
 
                 <Text className="absolute text-[rgba(255,255,255,0.6)] text-[18px] font-medium top-[185px] left-[15px]">
                     {content.category === "1" ? "Bikes" : "Accessories"}
