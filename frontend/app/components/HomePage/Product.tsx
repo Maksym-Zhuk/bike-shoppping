@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Image, Pressable } from "react-native";
 import Svg, { Defs, LinearGradient, Stop, Path, G } from "react-native-svg";
-import { Heart } from "lucide-react-native"; // 👈 import Lucide icon
+import { Heart } from "lucide-react-native";
 
 interface ProductProps {
     content?: {
+        _id: string;
         name: string;
         price: number;
         description: string;
@@ -13,12 +14,24 @@ interface ProductProps {
         category: string;
     };
     index?: number;
+    shoppingCart: string[];
+    onSaveShoppingCart: (text: string) => void;
 }
 
-export default function Product({ content, index }: ProductProps) {
+export default function Product({ content, index, shoppingCart, onSaveShoppingCart }: ProductProps) {
+    if (!content) return null;
     const [liked, setLiked] = useState(false);
 
-    if (!content) return null;
+    useEffect(() => {
+        if (shoppingCart.includes(content._id)) {
+            setLiked(true);
+        }
+    }, [shoppingCart]);
+
+    const handleLike = () => {
+        setLiked(!liked);
+        onSaveShoppingCart(content._id);
+    };
 
     return (
         <View
@@ -26,7 +39,6 @@ export default function Product({ content, index }: ProductProps) {
                 } ${((index ?? 0) > 1) ? "-mt-10" : ""}`}
             style={{ height: 300 }}
         >
-            {/* Card background */}
             <Svg
                 width={185}
                 height={260}
@@ -59,7 +71,7 @@ export default function Product({ content, index }: ProductProps) {
                         gradientUnits="userSpaceOnUse"
                     >
                         <Stop stopColor="white" />
-                        <Stop offset="1" stopOpacity="0" />
+                        <Stop offset="1" stopOpacity={0} />
                     </LinearGradient>
                 </Defs>
 
@@ -78,7 +90,6 @@ export default function Product({ content, index }: ProductProps) {
                 </G>
             </Svg>
 
-            {/* Content */}
             <View className="absolute inset-0 items-center justify-start pt-12">
                 <Image
                     source={{ uri: content.images[0] }}
@@ -87,7 +98,7 @@ export default function Product({ content, index }: ProductProps) {
                 />
 
                 <Pressable
-                    onPress={() => setLiked(!liked)}
+                    onPress={handleLike}
                     className="absolute top-[53px] right-[13px]"
                 >
                     <Heart
