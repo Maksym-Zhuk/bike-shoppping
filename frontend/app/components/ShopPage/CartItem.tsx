@@ -1,7 +1,7 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import { Trash2 } from "lucide-react-native";
-import React from "react";
+import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
+import React, { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
+
 interface CartItemProps {
     product: {
         _id: string;
@@ -13,6 +13,27 @@ interface CartItemProps {
 }
 
 export default function CartItem({ product, onRemove }: CartItemProps) {
+    const [quantity, setQuantity] = useState(1);
+
+    const handleDecrease = () => {
+        if (quantity > 1) {
+            setQuantity(prev => prev - 1);
+        } else {
+            Alert.alert(
+                "Remove product",
+                "Do you want to remove this product from the cart?",
+                [
+                    { text: "Cancel", style: "cancel" },
+                    { text: "Remove", style: "destructive", onPress: () => onRemove(product._id) },
+                ]
+            );
+        }
+    };
+
+    const handleIncrease = () => {
+        setQuantity(prev => prev + 1);
+    };
+
     return (
         <View className="w-full flex-row items-center p-4 mb-4 border-b border-[#353F54]">
             <LinearGradient
@@ -44,11 +65,24 @@ export default function CartItem({ product, onRemove }: CartItemProps) {
                 <Text className="text-[#3C9EEA] opacity-70 mt-1">$ {product.price}</Text>
             </View>
 
-            <TouchableOpacity onPress={() => onRemove(product._id)}>
-                <Trash2 size={22} color="#E53935" />
-            </TouchableOpacity>
+            <View className="flex-row items-center bg-[#1b212d]">
+                <TouchableOpacity
+                    className="px-3 py-1 border bg-[#34C8E8] rounded-md"
+                    onPress={handleIncrease}
+                >
+                    <Text className="text-white text-lg">+</Text>
+                </TouchableOpacity>
+                <View className="px-4 py-1 border-t border-b">
+                    <Text className="text-white text-lg">{quantity}</Text>
+                </View>
+                <TouchableOpacity
+                    className="px-3 py-1 border bg-[#353F54] rounded-md"
+                    onPress={handleDecrease}
+                >
+                    <Text className="text-white text-lg">-</Text>
+                </TouchableOpacity>
+
+            </View>
         </View>
-
-
     );
 }
